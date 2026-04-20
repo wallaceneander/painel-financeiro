@@ -1,0 +1,2261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Financeiro 2026</title>
+
+<!-- PWA Meta Tags -->
+<meta name="application-name" content="Painel Financeiro">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Painel Financeiro">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a4a8a">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f3;color:#2d2d2d;padding:1.5rem;line-height:1.6}
+.header{background:#fff;border:1px solid #e8e8e6;border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem}
+h1{font-size:20px;font-weight:700;color:#2d2d2d}
+.sub{font-size:12px;color:#888;margin-top:4px}
+.cambio-bar{background:#fff;border:1px solid #e8e8e6;border-radius:10px;padding:.7rem 1rem;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.cambio-left{display:flex;align-items:center;gap:10px}
+.cambio-label{font-size:11px;color:#888}
+.cambio-value{font-size:26px;font-weight:700;color:#2d2d2d}
+.cambio-badge{background:#FFEBEE;color:#C62828;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:600}
+.cambio-meta{font-size:11px;color:#888}
+.cambio-calc{display:flex;align-items:center;gap:8px}
+.cambio-sep{font-size:12px;font-weight:600;color:#666}
+.cambio-input{width:80px;padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;text-align:center}
+.tabs{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:2px solid #e8e8e6}
+.tab{padding:9px 20px;font-size:13px;font-weight:600;color:#888;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab:hover{color:#2d2d2d}
+.tab.active{color:#2d2d2d;border-bottom-color:#2d2d2d}
+.pane{display:none}
+.pane.active{display:block}
+.mes-sel{margin-bottom:1.2rem}
+.mes-sel label{font-size:12px;font-weight:600;color:#666;margin-right:8px}
+.mes-sel select{padding:6px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;background:#fff;cursor:pointer}
+.totals-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.tc{background:#fff;border:1px solid #e8e8e6;border-radius:10px;padding:1rem}
+.tl{font-size:12px;color:#888;margin-bottom:6px;font-weight:600}
+.tv{font-size:22px;font-weight:700;margin-bottom:4px}
+.ts{font-size:11px;color:#aaa}
+.green .tv{color:#2E7D32}
+.red .tv{color:#C62828}
+.blue .tv{color:#1565C0}
+.orange .tv{color:#E65100}
+.purple .tv{color:#6A1B9A}
+.gray .tv{color:#616161}
+.alert{background:#FFF3E0;border:1px solid #FFB74D;border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:13px;color:#E65100}
+.alert-green{background:#E8F5E9;border:1px solid #66BB6A;color:#2E7D32;border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:13px}
+.alert-blue{background:#E3F2FD;border:1px solid #42A5F5;color:#1565C0;border-radius:8px;padding:1rem;font-size:13px}
+.box{background:#fff;border:1px solid #e8e8e6;border-radius:10px;padding:1.2rem;margin-bottom:1.5rem}
+.box-title{font-size:14px;font-weight:700;margin-bottom:1rem;color:#2d2d2d}
+.metric{background:#fff;border:1px solid #e8e8e6;border-radius:8px;padding:12px;position:relative;overflow:hidden}
+.metric-accent{width:3px;height:100%;position:absolute;left:0;top:0;border-radius:2px}
+.metric-label{font-size:12px;font-weight:600;color:#666;margin-bottom:6px;padding-left:10px}
+.metric-value{font-size:18px;font-weight:700;color:#2d2d2d;padding-left:10px}
+.metric-sub{font-size:11px;color:#888;margin-top:4px;padding-left:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px;background:#f9f9f8;font-weight:600;color:#666;font-size:12px;border-bottom:2px solid #e8e8e6}
+td{padding:10px;border-bottom:1px solid #f0f0ee}
+.r{text-align:right}
+.pos{color:#2E7D32}
+.neg{color:#C62828}
+.subtotal{background:#f9f9f8;font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Painel Financeiro 2026</h1>
+  <div class="sub">Wallace & Bianca — 28 cartões + 7 empréstimos</div>
+</div>
+
+<div class="cambio-bar">
+  <div class="cambio-left">
+    <span style="font-size:22px">🇺🇸</span>
+    <div>
+      <div class="cambio-label">Dólar Comercial — 17 abr/26</div>
+      <div style="display:flex;align-items:baseline;gap:8px">
+        <span class="cambio-value">R$ 4,9355</span>
+        <span class="cambio-badge">▼ −0,18%</span>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+    <div class="cambio-meta">Valor Real R$ 4,9855 • Ajuste −R$ 0,05 • Investing.com</div>
+    <div class="cambio-calc">
+      <span class="cambio-sep">USD</span>
+      <input class="cambio-input" id="inUsd" type="number" value="1" min="0" step="any" oninput="calcC('usd')">
+      <span class="cambio-sep">=</span>
+      <input class="cambio-input" id="inBrl" type="number" value="4.94" min="0" step="any" oninput="calcC('brl')">
+      <span class="cambio-sep">BRL</span>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('geral')">📊 Controle Geral</button>
+  <button class="tab" onclick="switchTab('acompanhamento')">📅 Acompanhamento Mensal</button>
+  <button class="tab" onclick="switchTab('emprestimos')">💰 Empréstimos</button>
+  <button class="tab" onclick="switchTab('cartoes')">💳 Cartões</button>
+</div>
+
+<div id="pane-geral" class="pane active">
+  <div class="mes-sel">
+    <label>Mês:</label>
+    <select id="mesSel" onchange="renderGeral()">
+      <option value="4" selected>Abril 2026</option>
+      <option value="5">Maio 2026</option>
+      <option value="6">Junho 2026</option>
+      <option value="7">Julho 2026</option>
+      <option value="8">Agosto 2026</option>
+      <option value="9">Setembro 2026</option>
+      <option value="10">Outubro 2026</option>
+      <option value="11">Novembro 2026</option>
+      <option value="12">Dezembro 2026</option>
+    </select>
+  </div>
+  
+  <div id="recTotals" class="totals-row"></div>
+  <div id="saldoAlert" class="alert-green"></div>
+  
+  <div class="box">
+    <p class="box-title">📅 Próximas Contas a Pagar</p>
+    <div id="proximasContas" style="font-size:13px"></div>
+  </div>
+  
+  <div class="box">
+    <p class="box-title">📋 Updates do Mês — Abril 2026</p>
+    <div style="font-size:13px">
+      <p><strong style="color:#A32D2D">✓ Cartões Pagos (13):</strong> Neon, Mercado Pago, Amazon, Azul Bianca, Inter Bianca, Renner Bianca, BRB Master Wallace, Carrefour, Latam, Porto Visa Wallace, Porto Visa Bianca, Nubank, Porto Master</p>
+      <p style="margin-top:8px"><strong style="color:#7C3AED">✓ Empréstimos Pagos (3):</strong> BRB Bianca, Mercado Pago 2, Itau Bianca</p>
+      <p style="margin-top:8px"><strong style="color:#FF6F00">✓ Gastos Fixos Pagos (8):</strong> Celular R$ 210, Aluguel R$ 6.300, Lote R$ 1.202, Carro R$ 3.099, Dogs R$ 400, Psicóloga R$ 1.160, Piscina R$ 175, Alimentação R$ 1.000, Remédios R$ 500 — <strong>Total: R$ 15.645</strong></p>
+      <p style="margin-top:8px"><strong style="color:#2E7D32">✓ Recebimentos (6):</strong> PL R$ 8.000 (05/04), iFood R$ 2.581 (15/04), MasterMind 2× R$ 9.131 (05/04 + 17/04), Pareto R$ 4.000 (10/04), R2 R$ 8.000 (12/04) — <strong>Total: R$ 31.712</strong></p>
+      <p style="margin-top:8px"><strong style="color:#FF8C00">⏳ A Receber (3):</strong> iFood R$ 2.581 (30/04), Mind Body R$ 12.339 (25/04), Caução R$ 1.682 (20/04) — <strong>Total: R$ 16.602</strong></p>
+    </div>
+  </div>
+  
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+    <div class="box">
+      <p class="box-title">Income</p>
+      <div style="margin-bottom:1rem;padding:1rem;background:#E3F2FD;border-radius:8px">
+        <div style="font-size:12px;font-weight:700;color:#1565C0;margin-bottom:8px">WALLACE — BRL</div>
+        <div id="receitasWallace"></div>
+        <div style="border-top:1px solid #90CAF9;margin-top:12px;padding-top:8px">
+          <div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px">
+            <span>Total</span>
+            <span id="totalWallace">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#4CAF50">
+            <span>Paid</span>
+            <span id="paidWallace">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#D32F2F">
+            <span>Remaining</span>
+            <span id="remainingWallace">—</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:1rem;padding:1rem;background:#FCE4EC;border-radius:8px">
+        <div style="font-size:12px;font-weight:700;color:#C2185B;margin-bottom:8px">BIANCA — USD</div>
+        <div id="receitasBianca"></div>
+        <div style="border-top:1px solid #F48FB1;margin-top:12px;padding-top:8px">
+          <div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px">
+            <span>Total</span>
+            <span id="totalBianca">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#4CAF50">
+            <span>Paid</span>
+            <span id="paidBianca">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#D32F2F">
+            <span>Remaining</span>
+            <span id="remainingBianca">—</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="border-top:2px solid #e8e8e6;padding-top:1rem">
+        <div id="receitaResumo"></div>
+      </div>
+    </div>
+    
+    <div class="box">
+      <p class="box-title">Expenses</p>
+      
+      <div style="margin-bottom:1rem;padding:1rem;background:#FFF9C4;border-radius:8px">
+        <div style="font-size:12px;font-weight:700;color:#F57F17;margin-bottom:8px">CASA</div>
+        <div id="gastosCasa" style="font-size:13px;line-height:1.8"></div>
+        <div style="border-top:1px solid #F9A825;margin-top:12px;padding-top:8px">
+          <div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px">
+            <span>Total</span>
+            <span id="totalCasa">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#4CAF50">
+            <span>Paid</span>
+            <span id="paidCasa">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#D32F2F">
+            <span>Remaining</span>
+            <span id="remainingCasa">—</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:1rem;padding:1rem;background:#FFE0B2;border-radius:8px">
+        <div style="font-size:12px;font-weight:700;color:#E65100;margin-bottom:8px">ESTUDOS</div>
+        <div id="gastosEstudos" style="font-size:13px;line-height:1.8"></div>
+        <div style="border-top:1px solid #FB8C00;margin-top:12px;padding-top:8px">
+          <div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px">
+            <span>Total</span>
+            <span id="totalEstudos">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#4CAF50">
+            <span>Paid</span>
+            <span id="paidEstudos">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#D32F2F">
+            <span>Remaining</span>
+            <span id="remainingEstudos">—</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:1rem;padding:1rem;background:#E3F2FD;border-radius:8px">
+        <div style="font-size:12px;font-weight:700;color:#1565C0;margin-bottom:8px">SAÚDE</div>
+        <div id="gastosSaude" style="font-size:13px;line-height:1.8"></div>
+        <div style="border-top:1px solid #64B5F6;margin-top:12px;padding-top:8px">
+          <div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px">
+            <span>Total</span>
+            <span id="totalSaude">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#4CAF50">
+            <span>Paid</span>
+            <span id="paidSaude">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#D32F2F">
+            <span>Remaining</span>
+            <span id="remainingSaude">—</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:1rem;padding:1rem;background:#FFEBEE;border-radius:8px">
+        <div style="font-size:12px;font-weight:700;color:#C62828;margin-bottom:8px">GASTO FISCAL</div>
+        <div id="gastosFiscal" style="font-size:13px;line-height:1.8"></div>
+        <div style="border-top:1px solid #EF5350;margin-top:12px;padding-top:8px">
+          <div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px">
+            <span>Total</span>
+            <span id="totalFiscal">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#4CAF50">
+            <span>Paid</span>
+            <span id="paidFiscal">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#D32F2F">
+            <span>Remaining</span>
+            <span id="remainingFiscal">—</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:1rem;padding:1rem;border-radius:8px" id="saldoMesAnteriorBloco">
+        <!-- Preenchido dinamicamente -->
+      </div>
+      
+      <div style="margin-bottom:1rem;padding:1rem;background:#F5F5F5;border-radius:8px">
+        <div style="font-size:12px;font-weight:700;color:#616161;margin-bottom:8px">OUTROS</div>
+        <div id="gastosOutros" style="font-size:13px;line-height:1.8"></div>
+        <div style="border-top:1px solid #9E9E9E;margin-top:12px;padding-top:8px">
+          <div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px">
+            <span>Total</span>
+            <span id="totalOutros">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#4CAF50">
+            <span>Paid</span>
+            <span id="paidOutros">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#D32F2F">
+            <span>Remaining</span>
+            <span id="remainingOutros">—</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="padding:1rem;background:#EDE7F6;border-radius:8px">
+        <div style="font-size:12px;font-weight:700;color:#7C3AED;margin-bottom:8px">CARTÕES</div>
+        <div id="gastosCartoes"></div>
+        <div style="border-top:1px solid #B39DDB;margin-top:12px;padding-top:8px">
+          <div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px">
+            <span>Total</span>
+            <span id="subtotalCartoes" class="neg">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#4CAF50">
+            <span>Paid</span>
+            <span id="paidCartoes">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#D32F2F">
+            <span>Remaining</span>
+            <span id="remainingCartoes">—</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-top:1rem;padding:1rem;background:#FCE4EC;border-radius:8px">
+        <div style="font-size:12px;font-weight:700;color:#C2185B;margin-bottom:8px">EMPRÉSTIMOS</div>
+        <div id="gastosEmprestimos"></div>
+        <div style="border-top:1px solid #F48FB1;margin-top:12px;padding-top:8px">
+          <div style="display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px">
+            <span>Total</span>
+            <span id="totalEmpMes">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#4CAF50">
+            <span>Paid</span>
+            <span id="paidEmprestimos">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#D32F2F">
+            <span>Remaining</span>
+            <span id="remainingEmprestimos">—</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="border-top:2px solid #e8e8e6;margin-top:1rem;padding-top:1rem">
+        <div style="display:flex;justify-content:space-between;font-weight:700;font-size:15px;color:#C62828">
+          <span>GASTOS TOTAIS</span>
+          <span id="totalGastosMes">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="box">
+    <p class="box-title">Resumo financeiro</p>
+    <table id="resumoTabela"></table>
+  </div>
+</div>
+
+<div id="pane-acompanhamento" class="pane">
+  <h2 style="font-size:18px;font-weight:700;margin-bottom:1.5rem;color:#2d2d2d">📅 Acompanhamento Mensal</h2>
+  
+  <!-- Grid de meses lado a lado -->
+  <div id="acompanhamentoGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem"></div>
+</div>
+
+<div id="pane-emprestimos" class="pane">
+  <div class="mes-sel">
+    <label>Mês:</label>
+    <select id="mesEmp" onchange="renderEmprestimos()">
+      <option value="4" selected>Abril 2026</option>
+      <option value="5">Maio 2026</option>
+      <option value="6">Junho 2026</option>
+      <option value="7">Julho 2026</option>
+      <option value="8">Agosto 2026</option>
+      <option value="9">Setembro 2026</option>
+      <option value="10">Outubro 2026</option>
+      <option value="11">Novembro 2026</option>
+      <option value="12">Dezembro 2026</option>
+    </select>
+  </div>
+  
+  <div class="alert-blue">💰 <strong>7 empréstimos ativos</strong> com parcelas até 2030.</div>
+  
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem" id="empCards"></div>
+  
+  <div class="box">
+    <p class="box-title">Evolução mensal</p>
+    <canvas id="empChart" style="max-height:200px"></canvas>
+  </div>
+  
+  <div class="box">
+    <p class="box-title">Detalhamento mês a mês</p>
+    <div style="overflow-x:auto">
+      <table id="empTable"></table>
+    </div>
+  </div>
+</div>
+
+<div id="pane-cartoes" class="pane">
+  <div class="mes-sel">
+    <label>Mês:</label>
+    <select id="mesCards" onchange="renderCartoes()">
+      <option value="Abr/26" selected>Abril 2026</option>
+      <option value="Mai/26">Maio 2026</option>
+      <option value="Jun/26">Junho 2026</option>
+      <option value="Jul/26">Julho 2026</option>
+      <option value="Ago/26">Agosto 2026</option>
+      <option value="Set/26">Setembro 2026</option>
+      <option value="Out/26">Outubro 2026</option>
+      <option value="Nov/26">Novembro 2026</option>
+      <option value="Dez/26">Dezembro 2026</option>
+      <option value="Jan/27">Janeiro 2027</option>
+      <option value="Fev/27">Fevereiro 2027</option>
+      <option value="Mar/27">Março 2027</option>
+      <option value="Abr/27">Abril 2027</option>
+      <option value="Mai/27">Maio 2027</option>
+      <option value="Jun/27">Junho 2027</option>
+      <option value="Jul/27">Julho 2027</option>
+      <option value="Ago/27">Agosto 2027</option>
+      <option value="Set/27">Setembro 2027</option>
+      <option value="Out/27">Outubro 2027</option>
+      <option value="Nov/27">Novembro 2027</option>
+      <option value="Dez/27">Dezembro 2027</option>
+    </select>
+  </div>
+  
+  <div class="alert">⚠ <strong>29 cartões ativos</strong> — Wallace (22) + Bianca (7)</div>
+  
+  <!-- 6 Cards em grid 3x2 -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem">
+    <!-- Linha 1 -->
+    <div class="tc" style="background:#F5F5F5;border-left:4px solid #757575">
+      <div class="tl">Fatura <span id="mesAtualLabel1">Abr/26</span></div>
+      <div class="tv" style="color:#424242" id="faturaAtual">—</div>
+      <div class="ts">Total do mês</div>
+    </div>
+    <div class="tc" style="background:#E8F5E9;border-left:4px solid #4CAF50">
+      <div class="tl">Cartões Pagos</div>
+      <div class="tv" style="color:#4CAF50" id="cartoesPagosCard">—</div>
+      <div class="ts">Já quitados</div>
+    </div>
+    <div class="tc" style="background:#E3F2FD;border-left:4px solid #1976D2">
+      <div class="tl">Limite Total</div>
+      <div class="tv" style="color:#1976D2" id="limiteTotal">—</div>
+      <div class="ts">Todos os cartões</div>
+    </div>
+    
+    <!-- Linha 2 -->
+    <div class="tc" style="background:#EEEEEE;border-left:4px solid #616161">
+      <div class="tl">Fatura <span id="mesProxLabel1">Mai/26</span></div>
+      <div class="tv" style="color:#424242" id="faturaProx">—</div>
+      <div class="ts">Próximo mês</div>
+    </div>
+    <div class="tc" style="background:#FFEBEE;border-left:4px solid #D32F2F">
+      <div class="tl">Cartões em Aberto</div>
+      <div class="tv" style="color:#D32F2F" id="cartoesAPagarCard">—</div>
+      <div class="ts">A pagar</div>
+    </div>
+    <div class="tc" style="background:#E1F5FE;border-left:4px solid #0288D1">
+      <div class="tl">Limite Disponível</div>
+      <div class="tv" style="color:#0288D1" id="limiteDisponivel">—</div>
+      <div class="ts" id="limiteEmUso">Em uso: —</div>
+    </div>
+  </div>
+  
+  <!-- Filtro Wallace/Bianca/Todos -->
+  <div style="margin-bottom:1rem;display:flex;gap:0.5rem;align-items:center">
+    <label style="font-weight:600;color:#666;font-size:14px">Filtrar:</label>
+    <button id="filtroTodos" onclick="filtrarCartoes('todos')" style="padding:0.5rem 1rem;border:2px solid #1976D2;background:#1976D2;color:white;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px">Todos</button>
+    <button id="filtroWallace" onclick="filtrarCartoes('wallace')" style="padding:0.5rem 1rem;border:2px solid #1976D2;background:white;color:#1976D2;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px">Wallace</button>
+    <button id="filtroBianca" onclick="filtrarCartoes('bianca')" style="padding:0.5rem 1rem;border:2px solid #E91E63;background:white;color:#E91E63;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px">Bianca</button>
+  </div>
+  
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem" id="cardsGrid"></div>
+  
+  <div class="box">
+    <p class="box-title">Detalhamento mês a mês — Todos os cartões</p>
+    <div style="overflow-x:auto">
+      <table id="cardsTable"></table>
+    </div>
+  </div>
+</div>
+
+<script>
+// CONSTANTES
+const RATE=4.9355,IMPOSTO=2910,W_PJ=8000,W_IFOOD=5162,B_MB=2500,B_AZ=2500,B_MM=925;
+
+// GASTOS FIXOS DETALHADOS
+const GASTOS_FIXOS={
+  estudos:{fiap:580},
+  saude:{remedios:500,dogs:400,psicologa:1160},
+  casa_gastos:{celular:210,internet:170,streams:557},
+  carro:{aluguel:3099,gasolina:800},
+  casa:{casa:6300,lote:1202,energia:400,agua:300,faxina:800,piscina:175},
+  outros_casa:{gastos_extras:2000,alimentacao:1000},
+  outros:{trips:1667,investimento:15000,dizimo:0}
+};
+
+// Função para calcular gastos fixos do mês (Trips, Dízimo, Investimento só a partir de Jan/2027)
+function calcGastosFixos(mes,ano){
+  // Calcular faxina dinamicamente
+  const faxina = calcularFaxinas(mes, ano).total;
+  
+  let total=580+500+400+1160+210+170+557+3099+faxina+6300+1202+400+300+175+2000+1000;
+  // Trips e Investimento APENAS em 2027
+  if(ano>=2027){
+    total+=1667+15000; // trips + investimento (dízimo = 0)
+  }
+  return total;
+}
+
+// Função para calcular faxinas (R$ 200 por quinta-feira)
+function calcularFaxinas(mes, ano) {
+  const hoje = new Date();
+  const hojeDia = hoje.getDate();
+  const hojeMes = hoje.getMonth() + 1; // JavaScript usa 0-11
+  const hojeAno = hoje.getFullYear();
+  
+  // Se não é o mês/ano atual, calcular todas as quintas do mês
+  if (mes !== hojeMes || ano !== hojeAno) {
+    const totalQuintas = contarQuintasFeiras(mes, ano);
+    return {
+      total: totalQuintas * 200,
+      pagas: 0,
+      aPagar: totalQuintas * 200,
+      quintasPassadas: 0,
+      quintasFuturas: totalQuintas
+    };
+  }
+  
+  // É o mês atual, calcular quintas passadas e futuras
+  let quintasPassadas = 0;
+  let quintasFuturas = 0;
+  
+  const ultimoDia = new Date(ano, mes, 0).getDate();
+  
+  for (let dia = 1; dia <= ultimoDia; dia++) {
+    const data = new Date(ano, mes - 1, dia);
+    if (data.getDay() === 4) { // 4 = quinta-feira
+      if (dia <= hojeDia) {
+        quintasPassadas++;
+      } else {
+        quintasFuturas++;
+      }
+    }
+  }
+  
+  return {
+    total: (quintasPassadas + quintasFuturas) * 200,
+    pagas: quintasPassadas * 200,
+    aPagar: quintasFuturas * 200,
+    quintasPassadas: quintasPassadas,
+    quintasFuturas: quintasFuturas
+  };
+}
+
+// Função auxiliar para contar total de quintas-feiras em um mês
+function contarQuintasFeiras(mes, ano) {
+  let count = 0;
+  const ultimoDia = new Date(ano, mes, 0).getDate();
+  
+  for (let dia = 1; dia <= ultimoDia; dia++) {
+    const data = new Date(ano, mes - 1, dia);
+    if (data.getDay() === 4) { // 4 = quinta-feira
+      count++;
+    }
+  }
+  
+  return count;
+}
+
+function contarSextasFeiras(mes, ano) {
+  let count = 0;
+  const ultimoDia = new Date(ano, mes, 0).getDate();
+  
+  for (let dia = 1; dia <= ultimoDia; dia++) {
+    const data = new Date(ano, mes - 1, dia);
+    if (data.getDay() === 5) { // 5 = sexta-feira
+      count++;
+    }
+  }
+  
+  return count;
+}
+
+// PAGAMENTOS E RECEBIMENTOS REALIZADOS
+const UPDATES={
+  abril:{
+    saldo_inicial:0, // Primeiro mês, sem saldo anterior
+    cartoes_pagos:['neon','mercadopago','amazon','azul_inf_b','inter_b','renner_b','brb_master_w','credicard','latam','porto_visa_w','nubank','porto_visa_b'],
+    emprestimos_pagos:['brb_b','mp2','itau_b','itau_w'],
+    gastos_pagos:[
+      {tipo:'celular',valor:210},
+      {tipo:'aluguel',valor:6300},
+      {tipo:'lote',valor:1202},
+      {tipo:'carro',valor:3099},
+      {tipo:'dogs',valor:400},
+      {tipo:'psicologa',valor:1160},
+      {tipo:'piscina',valor:175},
+      {tipo:'alimentacao',valor:1000},
+      {tipo:'remedios',valor:500},
+      {tipo:'gasolina_1',valor:266.67},
+      {tipo:'gasolina_10',valor:266.67},
+      {tipo:'gasolina_20',valor:266.67},
+      {tipo:'faxina_2',valor:200},
+      {tipo:'faxina_9',valor:200},
+      {tipo:'faxina_16',valor:200},
+      {tipo:'gastos_extras_3',valor:500},
+      {tipo:'gastos_extras_10',valor:500},
+      {tipo:'gastos_extras_17',valor:500}
+    ],
+    recebimentos:[
+      {tipo:'wallace_pj',data:'05/04',valor:8000},
+      {tipo:'ifood_15',data:'15/04',valor:2581},
+      {tipo:'mastermind',data:'05/04',valor:925*RATE},
+      {tipo:'mastermind',data:'17/04',valor:925*RATE},
+      {tipo:'pareto',data:'10/04',valor:4000},
+      {tipo:'r2',data:'12/04',valor:8000}
+    ]
+  },
+  maio:{
+    saldo_inicial:0,
+    cartoes_pagos:[],
+    emprestimos_pagos:[],
+    gastos_pagos:[],
+    recebimentos:[]
+  },
+  junho:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+  julho:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+  agosto:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+  setembro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+  outubro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+  novembro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+  dezembro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+  // 2027
+  janeiro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+  fevereiro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+  marco:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]}
+};
+
+// Mapeamento mês número -> nome
+const MES_NOME={
+  1:'janeiro',2:'fevereiro',3:'marco',
+  4:'abril',5:'maio',6:'junho',7:'julho',8:'agosto',9:'setembro',10:'outubro',11:'novembro',12:'dezembro'
+};
+
+// COMPATIBILIDADE (mantém variável antiga)
+const PAGAMENTOS={
+  cartoes:UPDATES.abril.cartoes_pagos,
+  emprestimos:UPDATES.abril.emprestimos_pagos
+};
+
+// SCHEDULE MASTERMIND
+const MM_SCHED={
+  4:{c:1,d:'05'},5:{c:3,d:'02,16,30'},6:{c:2,d:'13,27'},7:{c:2,d:'11,25'},8:{c:2,d:'08,22'},
+  9:{c:2,d:'05,19'},10:{c:3,d:'03,17,31'},11:{c:2,d:'14,28'},12:{c:2,d:'12,26'}
+};
+
+// EMPRÉSTIMOS
+const EMPRESTIMOS=[
+  {id:'itau_b',nome:'Itau (Bianca)',valor:934,color:'#FF6A00'},
+  {id:'brb_b',nome:'BRB (Bianca)',valor:774,color:'#003DA5'},
+  {id:'brb_b2',nome:'BRB 2 (Bianca)',valor:708,color:'#0066CC'},
+  {id:'b5',nome:'Banco do Brasil (Wallace)',valor:1768,color:'#00A859'},
+  {id:'mp2',nome:'Mercado Pago 2 (Wallace)',valor:144,color:'#009EE3'},
+  {id:'mp1',nome:'Mercado Pago 1 (Wallace)',valor:1239,color:'#00D9B5'},
+  {id:'itau_w',nome:'Itau (Wallace)',valor:697,color:'#FF8C00'}
+];
+
+// INFORMAÇÕES DE PARCELAS DOS EMPRÉSTIMOS
+// Fórmula: parcelaInicial + (mes - 4) onde mes=4 é Abril
+const EMP_PARCELAS_INFO = {
+  itau_w: {parcelaAbril: 5, total: 55, mesInicio: 4},      // Abr: 5/55, Mai: 6/55, Jun: 7/55...
+  b5: {parcelaAbril: 11, total: 60, mesInicio: 4},         // Abr: 11/60, Mai: 12/60, Jun: 13/60...
+  mp2: {parcelaAbril: 3, total: 4, mesInicio: 4},          // Abr: 3/4, Mai: 4/4 (última)
+  mp1: {parcelaAbril: 4, total: 18, mesInicio: 4},         // Abr: 4/18, Mai: 5/18, Jun: 6/18...
+  itau_b: {parcelaAbril: 19, total: 56, mesInicio: 4},     // Abr: 19/56, Mai: 20/56, Jun: 21/56...
+  brb_b: {parcelaAbril: 5, total: 18, mesInicio: 4},       // Abr: 5/18, Mai: 6/18, Jun: 7/18...
+  brb_b2: {parcelaAbril: 0, total: 24, mesInicio: 5}       // Mai: 1/24 (inicia em Maio), Jun: 2/24...
+};
+
+const EMP_PARCELAS={
+  itau_b:{abr:934,mai:934,jun:934,jul:934,ago:934,set:934,out:934,nov:934,dez:934},
+  brb_b:{abr:774,mai:774,jun:774,jul:774,ago:774,set:774,out:774,nov:774,dez:774},
+  brb_b2:{abr:0,mai:708,jun:708,jul:708,ago:708,set:708,out:708,nov:708,dez:708},
+  b5:{abr:1768,mai:1768,jun:1768,jul:1768,ago:1768,set:1768,out:1768,nov:1768,dez:1768},
+  mp2:{abr:144,mai:144,jun:0,jul:0,ago:0,set:0,out:0,nov:0,dez:0},
+  mp1:{abr:1239,mai:1239,jun:1239,jul:1239,ago:1239,set:1239,out:1239,nov:1239,dez:1239},
+  itau_w:{abr:697,mai:697,jun:697,jul:697,ago:697,set:697,out:697,nov:697,dez:697}
+};
+
+// CARTÕES
+const CARDS=[
+  {id:'dm',nome:'DM (W)',owner:'wallace',dia:3,limite:3000},
+  {id:'neon',nome:'Neon (W)',owner:'wallace',dia:5,limite:4400},
+  {id:'mercadopago',nome:'MercadoPago (W)',owner:'wallace',dia:7,limite:5000},
+  {id:'amazon',nome:'Amazon (W)',owner:'wallace',dia:7,limite:4000},
+  {id:'brb_master_b',nome:'BRB Master (B)',owner:'bianca',dia:8,limite:7000},
+  {id:'itau_multi',nome:'Itau Multi (W)',owner:'wallace',dia:10,limite:3700},
+  {id:'pagseguro_b',nome:'PagSeguro (B)',owner:'bianca',dia:10,limite:7100},
+  {id:'azul_inf_b',nome:'Azul Infinite (B)',owner:'bianca',dia:13,limite:5960},
+  {id:'credicard',nome:'Carrefour (W)',owner:'wallace',dia:15,limite:12490},
+  {id:'latam',nome:'Latam Black (B)',owner:'bianca',dia:14,limite:18545},
+  {id:'brb_master_w',nome:'BRB Master (W)',owner:'wallace',dia:15,limite:2000},
+  {id:'renner_b',nome:'Renner (B)',owner:'bianca',dia:15,limite:5400},
+  {id:'inter_b',nome:'Inter (B)',owner:'bianca',dia:15,limite:12350},
+  {id:'porto_visa_w',nome:'Porto Visa (W)',owner:'wallace',dia:15,limite:3000},
+  {id:'porto_visa_b',nome:'Porto Visa (B)',owner:'bianca',dia:16,limite:3200},
+  {id:'porto_master',nome:'Porto Master (W)',owner:'wallace',dia:17,limite:5700},
+  {id:'sams',nome:'Sams (W)',owner:'wallace',dia:17,limite:2000},
+  {id:'nubank',nome:'Nubank (W)',owner:'wallace',dia:18,limite:2000},
+  {id:'inter_w',nome:'Inter (W)',owner:'wallace',dia:18,limite:3150},
+  {id:'brb_inf_w',nome:'BRB Infinite (W)',owner:'wallace',dia:20,limite:25900},
+  {id:'renner_w',nome:'Renner (W)',owner:'wallace',dia:20,limite:9000},
+  {id:'trigg',nome:'Trigg (W)',owner:'wallace',dia:20,limite:3000},
+  {id:'santander_w',nome:'Santander (W)',owner:'wallace',dia:20,limite:750},
+  {id:'azul_skyline',nome:'Azul Skyline (W)',owner:'wallace',dia:21,limite:10000},
+  {id:'itau_emp',nome:'Itau Empresa',owner:'wallace',dia:23,limite:3000},
+  {id:'pagseguro',nome:'PagSeguro (W)',owner:'wallace',dia:25,limite:1500},
+  {id:'brb_master2',nome:'BRB Master 2 (W)',owner:'wallace',dia:25,limite:700},
+  {id:'itau_black',nome:'Itau Uniclass Black (W)',owner:'wallace',dia:28,limite:7300},
+  {id:'santander_b',nome:'Santander (B)',owner:'bianca',dia:30,limite:2780}
+];
+
+const FATURAS=[
+  // DM (W) - dia 03
+  {card:'dm',mes:'Abr/26',val:0},{card:'dm',mes:'Mai/26',val:1030},{card:'dm',mes:'Jun/26',val:248},{card:'dm',mes:'Jul/26',val:248},{card:'dm',mes:'Ago/26',val:248},{card:'dm',mes:'Set/26',val:248},{card:'dm',mes:'Out/26',val:248},{card:'dm',mes:'Nov/26',val:248},{card:'dm',mes:'Dez/26',val:248},
+  // Neon (W) - dia 05
+  {card:'neon',mes:'Abr/26',val:0},{card:'neon',mes:'Mai/26',val:968},{card:'neon',mes:'Jun/26',val:789},{card:'neon',mes:'Jul/26',val:638},{card:'neon',mes:'Ago/26',val:528},{card:'neon',mes:'Set/26',val:528},{card:'neon',mes:'Out/26',val:437},{card:'neon',mes:'Nov/26',val:337},{card:'neon',mes:'Dez/26',val:153},
+  // MercadoPago (W) - dia 07
+  {card:'mercadopago',mes:'Abr/26',val:0},{card:'mercadopago',mes:'Mai/26',val:2036},{card:'mercadopago',mes:'Jun/26',val:537},{card:'mercadopago',mes:'Jul/26',val:524},{card:'mercadopago',mes:'Ago/26',val:524},{card:'mercadopago',mes:'Set/26',val:510},{card:'mercadopago',mes:'Out/26',val:335},{card:'mercadopago',mes:'Nov/26',val:290},{card:'mercadopago',mes:'Dez/26',val:290},
+  // Amazon (W) - dia 07
+  {card:'amazon',mes:'Abr/26',val:0},{card:'amazon',mes:'Mai/26',val:937},{card:'amazon',mes:'Jun/26',val:510},{card:'amazon',mes:'Jul/26',val:510},{card:'amazon',mes:'Ago/26',val:434},{card:'amazon',mes:'Set/26',val:434},{card:'amazon',mes:'Out/26',val:282},{card:'amazon',mes:'Nov/26',val:282},{card:'amazon',mes:'Dez/26',val:83},
+  // BRB Master (B) - dia 08
+  {card:'brb_master_b',mes:'Abr/26',val:0},{card:'brb_master_b',mes:'Mai/26',val:1181},{card:'brb_master_b',mes:'Jun/26',val:1057},{card:'brb_master_b',mes:'Jul/26',val:857},{card:'brb_master_b',mes:'Ago/26',val:857},{card:'brb_master_b',mes:'Set/26',val:857},{card:'brb_master_b',mes:'Out/26',val:747},{card:'brb_master_b',mes:'Nov/26',val:747},{card:'brb_master_b',mes:'Dez/26',val:747},
+  // Itau Multi (W) - dia 10
+  {card:'itau_multi',mes:'Abr/26',val:0},{card:'itau_multi',mes:'Mai/26',val:2269},{card:'itau_multi',mes:'Jun/26',val:960},{card:'itau_multi',mes:'Jul/26',val:298},{card:'itau_multi',mes:'Ago/26',val:175},
+  // PagSeguro (B) - dia 10 (sem faturas)
+  // Azul Infinite (B) - dia 13
+  {card:'azul_inf_b',mes:'Abr/26',val:0},{card:'azul_inf_b',mes:'Mai/26',val:1511},{card:'azul_inf_b',mes:'Jun/26',val:731},{card:'azul_inf_b',mes:'Jul/26',val:455},{card:'azul_inf_b',mes:'Ago/26',val:240},{card:'azul_inf_b',mes:'Set/26',val:240},{card:'azul_inf_b',mes:'Out/26',val:240},{card:'azul_inf_b',mes:'Nov/26',val:240},{card:'azul_inf_b',mes:'Dez/26',val:240},
+  // Carrefour (W) - dia 15
+  {card:'credicard',mes:'Abr/26',val:0},{card:'credicard',mes:'Mai/26',val:2435},{card:'credicard',mes:'Jun/26',val:1458},{card:'credicard',mes:'Jul/26',val:1458},{card:'credicard',mes:'Ago/26',val:1413},{card:'credicard',mes:'Set/26',val:1245},{card:'credicard',mes:'Out/26',val:495},{card:'credicard',mes:'Nov/26',val:495},{card:'credicard',mes:'Dez/26',val:495},
+  // Latam Black (B) - dia 14
+  {card:'latam',mes:'Abr/26',val:0},{card:'latam',mes:'Mai/26',val:2794},{card:'latam',mes:'Jun/26',val:1440},{card:'latam',mes:'Jul/26',val:1440},{card:'latam',mes:'Ago/26',val:1325},{card:'latam',mes:'Set/26',val:1325},{card:'latam',mes:'Out/26',val:1325},{card:'latam',mes:'Nov/26',val:1325},{card:'latam',mes:'Dez/26',val:795},
+  // BRB Master (W) - dia 15
+  {card:'brb_master_w',mes:'Abr/26',val:0},{card:'brb_master_w',mes:'Mai/26',val:144},{card:'brb_master_w',mes:'Jun/26',val:144},{card:'brb_master_w',mes:'Jul/26',val:144},{card:'brb_master_w',mes:'Ago/26',val:144},{card:'brb_master_w',mes:'Set/26',val:144},{card:'brb_master_w',mes:'Out/26',val:144},{card:'brb_master_w',mes:'Nov/26',val:144},{card:'brb_master_w',mes:'Dez/26',val:144},
+  // Renner (B) - dia 15
+  {card:'renner_b',mes:'Abr/26',val:0},{card:'renner_b',mes:'Mai/26',val:1392},{card:'renner_b',mes:'Jun/26',val:842},{card:'renner_b',mes:'Jul/26',val:758},{card:'renner_b',mes:'Ago/26',val:570},{card:'renner_b',mes:'Set/26',val:570},{card:'renner_b',mes:'Out/26',val:220},{card:'renner_b',mes:'Nov/26',val:220},{card:'renner_b',mes:'Dez/26',val:220},
+  // Inter (B) - dia 15
+  {card:'inter_b',mes:'Abr/26',val:0},{card:'inter_b',mes:'Mai/26',val:1495},{card:'inter_b',mes:'Jun/26',val:1447},{card:'inter_b',mes:'Jul/26',val:1330},{card:'inter_b',mes:'Ago/26',val:1330},{card:'inter_b',mes:'Set/26',val:1280},{card:'inter_b',mes:'Out/26',val:1280},{card:'inter_b',mes:'Nov/26',val:1280},{card:'inter_b',mes:'Dez/26',val:1280},
+  // Porto Visa (W) - dia 15
+  {card:'porto_visa_w',mes:'Abr/26',val:0},{card:'porto_visa_w',mes:'Mai/26',val:1054},{card:'porto_visa_w',mes:'Jun/26',val:383},{card:'porto_visa_w',mes:'Jul/26',val:383},{card:'porto_visa_w',mes:'Ago/26',val:383},{card:'porto_visa_w',mes:'Set/26',val:133},{card:'porto_visa_w',mes:'Out/26',val:133},{card:'porto_visa_w',mes:'Nov/26',val:133},
+  // Porto Visa (B) - dia 16
+  {card:'porto_visa_b',mes:'Abr/26',val:357},{card:'porto_visa_b',mes:'Mai/26',val:357},{card:'porto_visa_b',mes:'Jun/26',val:357},{card:'porto_visa_b',mes:'Jul/26',val:357},{card:'porto_visa_b',mes:'Ago/26',val:357},{card:'porto_visa_b',mes:'Set/26',val:357},{card:'porto_visa_b',mes:'Out/26',val:357},{card:'porto_visa_b',mes:'Nov/26',val:357},{card:'porto_visa_b',mes:'Dez/26',val:15},
+  // Porto Master (W) - dia 17
+  {card:'porto_master',mes:'Abr/26',val:1006},{card:'porto_master',mes:'Mai/26',val:1000},{card:'porto_master',mes:'Jun/26',val:965},{card:'porto_master',mes:'Jul/26',val:780},{card:'porto_master',mes:'Ago/26',val:780},{card:'porto_master',mes:'Set/26',val:390},{card:'porto_master',mes:'Out/26',val:390},{card:'porto_master',mes:'Nov/26',val:284},{card:'porto_master',mes:'Dez/26',val:228},
+  // Sams (W) - dia 17
+  {card:'sams',mes:'Abr/26',val:787},{card:'sams',mes:'Mai/26',val:374},
+  // Nubank (W) - dia 18
+  {card:'nubank',mes:'Abr/26',val:0},{card:'nubank',mes:'Mai/26',val:759},
+  // Inter (W) - dia 18
+  {card:'inter_w',mes:'Abr/26',val:1119},{card:'inter_w',mes:'Mai/26',val:541},{card:'inter_w',mes:'Jun/26',val:373},{card:'inter_w',mes:'Jul/26',val:269},{card:'inter_w',mes:'Ago/26',val:269},{card:'inter_w',mes:'Set/26',val:269},{card:'inter_w',mes:'Out/26',val:269},{card:'inter_w',mes:'Nov/26',val:269},{card:'inter_w',mes:'Dez/26',val:103},
+  // BRB Infinite (W) - dia 20
+  {card:'brb_inf_w',mes:'Abr/26',val:4319},{card:'brb_inf_w',mes:'Mai/26',val:3395},{card:'brb_inf_w',mes:'Jun/26',val:3198},{card:'brb_inf_w',mes:'Jul/26',val:3013},{card:'brb_inf_w',mes:'Ago/26',val:2616},{card:'brb_inf_w',mes:'Set/26',val:2514},{card:'brb_inf_w',mes:'Out/26',val:1925},{card:'brb_inf_w',mes:'Nov/26',val:1855},{card:'brb_inf_w',mes:'Dez/26',val:1689},
+  // Renner (W) - dia 20
+  {card:'renner_w',mes:'Abr/26',val:3235},{card:'renner_w',mes:'Mai/26',val:2103},{card:'renner_w',mes:'Jun/26',val:790},{card:'renner_w',mes:'Jul/26',val:600},{card:'renner_w',mes:'Ago/26',val:600},{card:'renner_w',mes:'Set/26',val:600},{card:'renner_w',mes:'Out/26',val:362},{card:'renner_w',mes:'Nov/26',val:362},{card:'renner_w',mes:'Dez/26',val:362},
+  // Trigg (W) - dia 20
+  {card:'trigg',mes:'Abr/26',val:979},{card:'trigg',mes:'Mai/26',val:843},{card:'trigg',mes:'Jun/26',val:463},{card:'trigg',mes:'Jul/26',val:390},{card:'trigg',mes:'Ago/26',val:180},{card:'trigg',mes:'Set/26',val:180},
+  // Santander (W) - dia 20
+  {card:'santander_w',mes:'Abr/26',val:709},
+  // Azul Skyline (W) - dia 21
+  {card:'azul_skyline',mes:'Abr/26',val:2170},{card:'azul_skyline',mes:'Mai/26',val:2128},{card:'azul_skyline',mes:'Jun/26',val:1234},{card:'azul_skyline',mes:'Jul/26',val:1234},{card:'azul_skyline',mes:'Ago/26',val:800},{card:'azul_skyline',mes:'Set/26',val:800},{card:'azul_skyline',mes:'Out/26',val:573},{card:'azul_skyline',mes:'Nov/26',val:573},{card:'azul_skyline',mes:'Dez/26',val:573},
+  // Itau Empresa - dia 23
+  {card:'itau_emp',mes:'Abr/26',val:910},{card:'itau_emp',mes:'Mai/26',val:238},{card:'itau_emp',mes:'Jun/26',val:238},{card:'itau_emp',mes:'Jul/26',val:238},{card:'itau_emp',mes:'Ago/26',val:238},{card:'itau_emp',mes:'Set/26',val:238},{card:'itau_emp',mes:'Out/26',val:238},{card:'itau_emp',mes:'Nov/26',val:226},{card:'itau_emp',mes:'Dez/26',val:176},
+  // PagSeguro (W) - dia 25
+  {card:'pagseguro',mes:'Abr/26',val:270},{card:'pagseguro',mes:'Mai/26',val:145},{card:'pagseguro',mes:'Jun/26',val:145},{card:'pagseguro',mes:'Jul/26',val:145},{card:'pagseguro',mes:'Ago/26',val:145},{card:'pagseguro',mes:'Set/26',val:145},{card:'pagseguro',mes:'Out/26',val:145},{card:'pagseguro',mes:'Nov/26',val:145},{card:'pagseguro',mes:'Dez/26',val:145},
+  // BRB Master 2 (W) - dia 25
+  {card:'brb_master2',mes:'Abr/26',val:418},{card:'brb_master2',mes:'Mai/26',val:78},{card:'brb_master2',mes:'Jun/26',val:78},{card:'brb_master2',mes:'Jul/26',val:78},{card:'brb_master2',mes:'Ago/26',val:78},
+  // Itau Uniclass Black (W) - dia 28
+  {card:'itau_black',mes:'Abr/26',val:1484},{card:'itau_black',mes:'Mai/26',val:1378},{card:'itau_black',mes:'Jun/26',val:808},{card:'itau_black',mes:'Jul/26',val:750},{card:'itau_black',mes:'Ago/26',val:750},{card:'itau_black',mes:'Set/26',val:750},{card:'itau_black',mes:'Out/26',val:660},{card:'itau_black',mes:'Nov/26',val:440},{card:'itau_black',mes:'Dez/26',val:278},
+  // Santander (B) - dia 30
+  {card:'santander_b',mes:'Abr/26',val:447},{card:'santander_b',mes:'Mai/26',val:263},{card:'santander_b',mes:'Jun/26',val:263},{card:'santander_b',mes:'Jul/26',val:263},{card:'santander_b',mes:'Ago/26',val:263},{card:'santander_b',mes:'Set/26',val:150},{card:'santander_b',mes:'Out/26',val:150},{card:'santander_b',mes:'Nov/26',val:150},{card:'santander_b',mes:'Dez/26',val:150},
+  
+  // ========== 2027 ==========
+  // MercadoPago (W) - dia 07
+  {card:'mercadopago',mes:'Jan/27',val:210},{card:'mercadopago',mes:'Fev/27',val:75},{card:'mercadopago',mes:'Mar/27',val:17},{card:'mercadopago',mes:'Abr/27',val:17},{card:'mercadopago',mes:'Mai/27',val:17},{card:'mercadopago',mes:'Jun/27',val:17},{card:'mercadopago',mes:'Jul/27',val:17},{card:'mercadopago',mes:'Ago/27',val:17},{card:'mercadopago',mes:'Set/27',val:17},{card:'mercadopago',mes:'Out/27',val:17},
+  // Amazon (W) - dia 07
+  {card:'amazon',mes:'Jan/27',val:83},{card:'amazon',mes:'Fev/27',val:70},
+  // Azul Infinite (B) - dia 13
+  {card:'azul_inf_b',mes:'Jan/27',val:240},{card:'azul_inf_b',mes:'Fev/27',val:240},{card:'azul_inf_b',mes:'Mar/27',val:240},{card:'azul_inf_b',mes:'Abr/27',val:240},{card:'azul_inf_b',mes:'Mai/27',val:240},{card:'azul_inf_b',mes:'Jun/27',val:240},{card:'azul_inf_b',mes:'Jul/27',val:240},{card:'azul_inf_b',mes:'Ago/27',val:240},
+  // Carrefour (W) - dia 15
+  {card:'credicard',mes:'Jan/27',val:142},
+  // Latam Black (B) - dia 14
+  {card:'latam',mes:'Jan/27',val:441},{card:'latam',mes:'Fev/27',val:441},{card:'latam',mes:'Mar/27',val:441},{card:'latam',mes:'Abr/27',val:441},{card:'latam',mes:'Mai/27',val:441},{card:'latam',mes:'Jun/27',val:441},{card:'latam',mes:'Jul/27',val:441},{card:'latam',mes:'Ago/27',val:441},
+  // BRB Master (W) - dia 15
+  {card:'brb_master_w',mes:'Jan/27',val:144},
+  // Renner (B) - dia 15
+  {card:'renner_b',mes:'Jan/27',val:220},{card:'renner_b',mes:'Fev/27',val:220},
+  // Porto Master (W) - dia 17
+  {card:'porto_master',mes:'Jan/27',val:25},
+  // BRB Infinite (W) - dia 20
+  {card:'brb_inf_w',mes:'Jan/27',val:366},{card:'brb_inf_w',mes:'Fev/27',val:366},{card:'brb_inf_w',mes:'Mar/27',val:366}
+];
+
+// FUNÇÕES AUXILIARES
+function fmt(v){return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function getEmpMes(mes){
+  const mk=['','jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][mes];
+  let t=0;
+  Object.keys(EMP_PARCELAS).forEach(e=>{if(EMP_PARCELAS[e][mk])t+=EMP_PARCELAS[e][mk];});
+  return t;
+}
+
+function calcC(tipo){
+  const usd=parseFloat(document.getElementById('inUsd').value)||0;
+  const brl=parseFloat(document.getElementById('inBrl').value)||0;
+  if(tipo==='usd'){
+    document.getElementById('inBrl').value=(usd*4.9355).toFixed(2);
+  }else{
+    document.getElementById('inUsd').value=(brl/4.9355).toFixed(2);
+  }
+}
+
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  
+  // Encontrar o botão correto pela id
+  const buttons = document.querySelectorAll('.tab');
+  if(id==='geral') buttons[0].classList.add('active');
+  if(id==='acompanhamento') buttons[1].classList.add('active');
+  if(id==='emprestimos') buttons[2].classList.add('active');
+  if(id==='cartoes') buttons[3].classList.add('active');
+  
+  document.getElementById('pane-'+id).classList.add('active');
+  
+  if(id==='acompanhamento')renderAcompanhamento();
+  if(id==='emprestimos')renderEmprestimos();
+  if(id==='cartoes')renderCartoes();
+}
+
+// INICIALIZAR
+document.addEventListener('DOMContentLoaded',()=>{
+  renderGeral();
+});
+
+// Variável global para saldo acumulado
+let SALDO_ACUMULADO=0;
+
+// FUNÇÕES PARA CALCULAR DIAS ESPECÍFICOS DO MÊS
+function getQuintasFeiras(mes, ano) {
+  const quintas = [];
+  const date = new Date(ano, mes - 1, 1); // mes-1 porque Date usa 0-11
+  
+  // Encontrar todas as quintas-feiras do mês
+  while (date.getMonth() === mes - 1) {
+    if (date.getDay() === 4) { // 4 = quinta-feira
+      quintas.push(date.getDate());
+    }
+    date.setDate(date.getDate() + 1);
+  }
+  
+  return quintas;
+}
+
+function getSextasFeiras(mes, ano) {
+  const sextas = [];
+  const date = new Date(ano, mes - 1, 1);
+  
+  // Encontrar todas as sextas-feiras do mês
+  while (date.getMonth() === mes - 1) {
+    if (date.getDay() === 5) { // 5 = sexta-feira
+      sextas.push(date.getDate());
+    }
+    date.setDate(date.getDate() + 1);
+  }
+  
+  return sextas;
+}
+
+function isDiaPassado(dia, mes, ano) {
+  const hoje = new Date();
+  const diaData = new Date(ano, mes - 1, dia);
+  return diaData < hoje;
+}
+
+// FILTRO DE CARTÕES
+let FILTRO_CARTAO = 'todos';
+
+function filtrarCartoes(filtro) {
+  FILTRO_CARTAO = filtro;
+  
+  // Atualizar botões
+  document.getElementById('filtroTodos').style.background = filtro === 'todos' ? '#1976D2' : 'white';
+  document.getElementById('filtroTodos').style.color = filtro === 'todos' ? 'white' : '#1976D2';
+  
+  document.getElementById('filtroWallace').style.background = filtro === 'wallace' ? '#1976D2' : 'white';
+  document.getElementById('filtroWallace').style.color = filtro === 'wallace' ? 'white' : '#1976D2';
+  
+  document.getElementById('filtroBianca').style.background = filtro === 'bianca' ? '#E91E63' : 'white';
+  document.getElementById('filtroBianca').style.color = filtro === 'bianca' ? 'white' : '#E91E63';
+  
+  // Re-renderizar cartões
+  renderCartoes();
+}
+
+function renderGeral(){
+  const mes=parseInt(document.getElementById('mesSel').value);
+  const ano = mes <= 12 ? 2026 : 2027;
+  const mesKey=MES_NOME[mes];
+  const updates=UPDATES[mesKey]||{cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]};
+  
+  // USAR O MONTH BALANCE DO MÊS ANTERIOR (que já foi calculado)
+  // Guardamos em um cache global
+  if(!window.MONTH_BALANCE_CACHE) window.MONTH_BALANCE_CACHE = {};
+  
+  let SALDO_MES_ANTERIOR = 0;
+  
+  if(mes > 4) {
+    const mesAnt = mes - 1;
+    const monthBalanceAnt = window.MONTH_BALANCE_CACHE[mesAnt] || 0;
+    
+    // REGRA: Se negativo → inverte e vai para Saldo, se positivo → vai para Current Amount
+    if(monthBalanceAnt >= 0) {
+      SALDO_ACUMULADO = monthBalanceAnt;
+      SALDO_MES_ANTERIOR = 0;
+    } else {
+      SALDO_ACUMULADO = 0;
+      SALDO_MES_ANTERIOR = Math.abs(monthBalanceAnt);
+    }
+  } else {
+    SALDO_ACUMULADO = updates.saldo_inicial || 0;
+  }
+  
+  // RECEITAS DO MÊS
+  const mm=MM_SCHED[mes]||{c:2};
+  const mmUsd=mm.c*B_MM;
+  const mmBrl=mmUsd*RATE;
+  const mbBrl=B_MB*RATE;
+  const azAtivo=mes>=5?B_AZ:0; // Above Zero só a partir de Maio
+  const azBrl=azAtivo*RATE;
+  const bTotalUsd=mmUsd+B_MB+azAtivo;
+  const bTotalBrl=bTotalUsd*RATE;
+  
+  // Receitas pontuais de Abril
+  const caucaoAbril=mes===4?1682:0;
+  const r2Abril=mes===4?8000:0;
+  const paretoAbril=mes===4?4000:0;
+  
+  // Receitas pontuais de Maio
+  const ifoodPLRMaio=mes===5?4500:0;
+  const mindBodyMaio=mes===5?1400:0; // Mind Body Green pontual $1.400
+  const mindBodyMaioBrl=mindBodyMaio*RATE;
+  
+  const receitaBruta=bTotalBrl+W_PJ+W_IFOOD+caucaoAbril+r2Abril+paretoAbril+ifoodPLRMaio+mindBodyMaioBrl+azBrl;
+  // Receita bruta SEM descontar imposto
+  
+  // Variáveis temporárias - serão recalculadas depois dos blocos de receitas
+  let totalRecebido = 0;
+  let aReceber = receitaBruta; // Inicialmente assume que nada foi recebido
+  
+  // CÁLCULO DINÂMICO DO IMPOSTO
+  // Receitas BRL (6%): PL + R2 + Pareto + Caução (sem iFood)
+  const receitasBRL = W_PJ + r2Abril + paretoAbril + caucaoAbril;
+  
+  // Receitas USD (3%): MasterMind + Mind Body Green (regular + pontual) + Above Zero
+  const receitasUSD = mmBrl + mbBrl + mindBodyMaioBrl + azBrl;
+  
+  // Imposto = BRL * 6% + USD * 3%
+  const impostoMes = (receitasBRL * 0.06) + (receitasUSD * 0.03);
+  
+  // GASTOS FIXOS JÁ PAGOS
+  const gastosPagos=updates.gastos_pagos?updates.gastos_pagos.reduce((s,g)=>s+g.valor,0):0;
+  
+  // CALCULAR CARTÕES - TOTAL de todos cartões do mês (pagos + não pagos)
+  const mesNome=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][mes]+'/26';
+  let cartoesTotal=0;
+  CARDS.forEach(c=>{
+    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mesNome);
+    if(f)cartoesTotal+=f.val;
+  });
+  
+  // CARTÕES A PAGAR (não pagos)
+  let cartoesAPagar=0;
+  CARDS.forEach(c=>{
+    if(updates.cartoes_pagos.includes(c.id))return;
+    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mesNome);
+    if(f)cartoesAPagar+=f.val;
+  });
+  
+  // CALCULAR EMPRÉSTIMOS - TOTAL de todos empréstimos do mês
+  let empTotal=0;
+  const mk=['','jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][mes];
+  EMPRESTIMOS.forEach(e=>{
+    const v=EMP_PARCELAS[e.id][mk]||0;
+    empTotal+=v;
+  });
+  
+  // EMPRÉSTIMOS A PAGAR (não pagos)
+  let empAPagar=0;
+  EMPRESTIMOS.forEach(e=>{
+    if(updates.emprestimos_pagos.includes(e.id))return;
+    const v=EMP_PARCELAS[e.id][mk]||0;
+    empAPagar+=v;
+  });
+  
+  // SALDO DO MÊS (considerando o que já foi recebido e o que já foi pago)
+  const cartoesPagos=CARDS.reduce((s,c)=>{
+    if(!updates.cartoes_pagos.includes(c.id))return s;
+    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mesNome);
+    return s+(f?f.val:0);
+  },0);
+  
+  const empPagos=EMPRESTIMOS.reduce((s,e)=>{
+    if(!updates.emprestimos_pagos.includes(e.id))return s;
+    const v=EMP_PARCELAS[e.id][mk]||0;
+    return s+v;
+  },0);
+  
+  // aPagar será calculado após renderizar os blocos de gastos
+  let aPagar = 0; // Inicialização temporária
+  
+  // saldoMes será calculado depois de aReceber e aPagar estarem corretos
+  
+  // CARDS TOTAIS
+  
+  // Card separado para Saldo Mês Anterior
+  const mesAnterior=['','','','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][mes];
+  
+  // Os cards serão renderizados depois de calcular aReceber e totalRecebido
+  
+  // RECEITAS WALLACE - Sistema com riscado e totais
+  const receitasWallace = [
+    {tipo:'wallace_pj', nome:'PL', valor:W_PJ, info:'dia 05'},
+    {tipo:'ifood_15', nome:'iFood', valor:W_IFOOD/2, info:'R$ 2.581 dia 15'},
+    {tipo:'ifood_30', nome:'iFood', valor:W_IFOOD/2, info:'R$ 2.581 dia 30'}
+  ];
+  
+  if(mes===4) {
+    receitasWallace.push({tipo:'caucao', nome:'Caução Aluguel', valor:caucaoAbril, info:'dia 20 • pontual'});
+    receitasWallace.push({tipo:'r2', nome:'R2', valor:r2Abril, info:'dia 12 • pontual'});
+  }
+  
+  if(mes===5) {
+    receitasWallace.push({tipo:'ifood_plr', nome:'iFood PLR', valor:ifoodPLRMaio, info:'dia 20 • pontual'});
+  }
+  
+  let htmlWallace = '';
+  let totalWallace = 0;
+  let paidWallace = 0;
+  
+  receitasWallace.forEach(r => {
+    const pago = updates.recebimentos && updates.recebimentos.find(rec => rec.tipo === r.tipo);
+    const estilo = pago ? 'text-decoration:line-through;opacity:0.6;color:#4CAF50' : '';
+    
+    htmlWallace += `<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;${estilo}">
+      <span>${r.nome}</span>
+      <div style="text-align:right">
+        <div class="${pago?'pos':'pos'}">${fmt(r.valor)}</div>
+        <div style="font-size:11px;color:#888">${r.info}</div>
+      </div>
+    </div>`;
+    
+    totalWallace += r.valor;
+    if(pago) paidWallace += r.valor;
+  });
+  
+  const remainingWallace = totalWallace - paidWallace;
+  
+  document.getElementById('receitasWallace').innerHTML = htmlWallace;
+  document.getElementById('totalWallace').textContent = fmt(totalWallace);
+  document.getElementById('paidWallace').textContent = fmt(paidWallace);
+  document.getElementById('remainingWallace').textContent = fmt(remainingWallace);
+  
+  // RECEITAS BIANCA - Sistema com riscado e totais
+  const receitasBianca = [
+    {tipo:'mastermind', nome:'MasterMind', valor:mmBrl, info:`$${mmUsd.toLocaleString('en-US')} (${mm.c}× quinzenal)`},
+    {tipo:'mind_body', nome:'Mind Body Green', valor:mbBrl, info:`$${B_MB} (dia 05)`}
+  ];
+  
+  if(mes===4) {
+    receitasBianca.push({tipo:'pareto', nome:'Pareto', valor:paretoAbril, info:'dia 10 • pontual'});
+  }
+  
+  if(mes===5) {
+    receitasBianca.push({tipo:'mind_body_maio', nome:'Mind Body Green', valor:mindBodyMaioBrl, info:`$${mindBodyMaio} (pontual)`});
+  }
+  
+  if(mes>=5) {
+    receitasBianca.push({tipo:'above_zero', nome:'Above Zero', valor:azBrl, info:`$${B_AZ} (dia 20)`});
+  }
+  
+  let htmlBianca = '';
+  let totalBianca = 0;
+  let paidBianca = 0;
+  
+  receitasBianca.forEach(r => {
+    const pago = updates.recebimentos && updates.recebimentos.find(rec => rec.tipo === r.tipo);
+    const estilo = pago ? 'text-decoration:line-through;opacity:0.6;color:#4CAF50' : '';
+    
+    htmlBianca += `<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;${estilo}">
+      <span>${r.nome}</span>
+      <div style="text-align:right">
+        <div class="${pago?'pos':'pos'}">${fmt(r.valor)}</div>
+        <div style="font-size:11px;color:#888">${r.info}</div>
+      </div>
+    </div>`;
+    
+    totalBianca += r.valor;
+    if(pago) paidBianca += r.valor;
+  });
+  
+  const remainingBianca = totalBianca - paidBianca;
+  const bTotalBrlFinal = totalBianca;
+  
+  // Calcular total USD incluindo todas receitas pontuais
+  const totalUsdBianca = bTotalUsd + (paretoAbril/RATE) + mindBodyMaio;
+  
+  document.getElementById('receitasBianca').innerHTML = htmlBianca;
+  document.getElementById('totalBianca').textContent = `${fmt(bTotalBrlFinal)} ($${totalUsdBianca.toLocaleString('en-US')})`;
+  document.getElementById('paidBianca').textContent = fmt(paidBianca);
+  document.getElementById('remainingBianca').textContent = fmt(remainingBianca);
+  
+  // RECALCULAR aReceber e totalRecebido baseado nos valores reais
+  aReceber = remainingWallace + remainingBianca;
+  totalRecebido = paidWallace + paidBianca;
+  
+  // Cards serão renderizados após calcular aPagar
+  
+  // RESUMO RECEITAS
+  const totalWallaceFinal=W_PJ+W_IFOOD+caucaoAbril+r2Abril;
+  const totalBiancaFinal=bTotalBrl+paretoAbril;
+  
+  document.getElementById('receitaResumo').innerHTML=`
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+      <span class="pos">Wallace</span>
+      <span class="pos">${fmt(totalWallaceFinal)}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+      <span class="pos">Bianca</span>
+      <span class="pos">${fmt(totalBiancaFinal)}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;border-top:2px solid #33691E;padding-top:8px;font-weight:700">
+      <span class="pos">TOTAL</span>
+      <span class="pos">${fmt(receitaBruta)}</span>
+    </div>`;
+  
+  // BLOCO SALDO DO MÊS (nos gastos)
+  // Se tem valor > 0 = dívida (vermelho), se = 0 (azul)
+  const corSaldoAnterior=SALDO_MES_ANTERIOR>0?'#FFCDD2':'#E3F2FD';
+  const corTextoSaldoAnterior=SALDO_MES_ANTERIOR>0?'#B71C1C':'#1565C0';
+  const corBordaSaldo=SALDO_MES_ANTERIOR>0?'#EF5350':'#64B5F6';
+  
+  document.getElementById('saldoMesAnteriorBloco').innerHTML=`
+    <div style="font-size:12px;font-weight:700;color:${corTextoSaldoAnterior};margin-bottom:8px">SALDO</div>
+    <div style="font-size:13px;line-height:1.8">
+      <div style="display:flex;justify-content:space-between">
+        <span>Saldo do Mês Anterior</span>
+        <span class="${SALDO_MES_ANTERIOR>0?'neg':'pos'}" style="font-weight:700">${fmt(SALDO_MES_ANTERIOR)}</span>
+      </div>
+    </div>
+    <div style="border-top:1px solid ${corBordaSaldo};margin-top:12px;padding-top:8px">
+      <div style="display:flex;justify-content:space-between;font-weight:700">
+        <span>Subtotal Saldo</span>
+        <span class="${SALDO_MES_ANTERIOR>0?'neg':'pos'}">${fmt(SALDO_MES_ANTERIOR)}</span>
+      </div>
+    </div>`;
+  document.getElementById('saldoMesAnteriorBloco').style.background=corSaldoAnterior;
+  
+  // RENDERIZAR GASTOS FIXOS COM RISCADO
+  const faxinaCalc = calcularFaxinas(mes, 2026);
+  
+  // Calcular quintas e sextas-feiras do mês
+  const quintasFeiras = getQuintasFeiras(mes, 2026);
+  const sextasFeiras = getSextasFeiras(mes, 2026);
+  
+  // Criar array de faxinas (uma por quinta-feira)
+  const faxinas = quintasFeiras.map(dia => ({
+    tipo: `faxina_${dia}`,
+    nome: `Faxina (${String(dia).padStart(2, '0')})`,
+    valor: 200,
+    dia: dia,
+    passado: isDiaPassado(dia, mes, 2026)
+  }));
+  
+  // Criar array de gasolinas (dias 1, 10, 20)
+  const gasolinas = [1, 10, 20].map(dia => ({
+    tipo: `gasolina_${dia}`,
+    nome: `Gasolina (${String(dia).padStart(2, '0')})`,
+    valor: 800 / 3,
+    dia: dia,
+    passado: isDiaPassado(dia, mes, 2026)
+  }));
+  
+  // Criar array de gastos extras (uma por sexta-feira)
+  const gastosExtras = sextasFeiras.map(dia => ({
+    tipo: `gastos_extras_${dia}`,
+    nome: `Gastos Extras (${String(dia).padStart(2, '0')})`,
+    valor: 2000 / sextasFeiras.length,
+    dia: dia,
+    passado: isDiaPassado(dia, mes, 2026)
+  }));
+  
+  const GASTOS_FIXOS = {
+    casa: [
+      ...gasolinas, // Gasolinas (01, 10, 20)
+      ...faxinas, // Faxinas (quintas-feiras)
+      ...gastosExtras, // Gastos Extras (sextas-feiras)
+      {tipo:'aluguel', nome:'Aluguel (05)', valor:6300},
+      {tipo:'dogs', nome:'Dogs (05)', valor:400},
+      {tipo:'lote', nome:'Lote (09)', valor:1202},
+      {tipo:'piscina', nome:'Piscina (10)', valor:175},
+      {tipo:'alimentacao', nome:'Alimentação (10)', valor:1000},
+      {tipo:'carro', nome:'Carro (15)', valor:3099},
+      {tipo:'streams', nome:'Streams (20)', valor:557},
+      {tipo:'celular', nome:'Celular (25)', valor:210},
+      {tipo:'internet', nome:'Internet (25)', valor:170},
+      {tipo:'energia', nome:'Energia (30)', valor:400},
+      {tipo:'agua', nome:'Água (30)', valor:300}
+    ],
+    estudos: [
+      {tipo:'fiap', nome:'FIAP (30)', valor: mes === 5 ? 0 : 580}
+    ],
+    saude: [
+      {tipo:'remedios', nome:'Remédios', valor:500},
+      {tipo:'psicologa', nome:'Psicóloga (10)', valor:1160}
+    ],
+    fiscal: [
+      {tipo:'imposto', nome:'Imposto (20)', valor:impostoMes},
+      {tipo:'contabilidade', nome:'Contabilidade (20)', valor:534},
+      {tipo:'multa', nome:`Multa (30) ${mes + 2}/24`, valor:328} // Abr(4)=6/24, Mai(5)=7/24, Jun(6)=8/24...
+    ],
+    outros: [
+      {tipo:'trips', nome:'Trips', valor: ano >= 2027 ? 1667 : 0},
+      {tipo:'dizimo', nome:'Dízimo', valor: 0},
+      {tipo:'investimento', nome:'Investimento', valor: ano >= 2027 ? 15000 : 0}
+    ]
+  };
+  
+  // Renderizar cada categoria e calcular gastosAPagar corretamente
+  let gastosAPagarCorreto = 0;
+  let gastoFixoTotal = 0;
+  let gastosPagosCorreto = 0;
+  
+  ['casa','estudos','saude','fiscal','outros'].forEach(cat => {
+    let html = '';
+    let total = 0;
+    let paid = 0;
+    
+    // TRATAMENTO ESPECIAL PARA FISCAL - MOSTRAR DETALHAMENTO DO IMPOSTO
+    if (cat === 'fiscal') {
+      GASTOS_FIXOS[cat].forEach(g => {
+        const pago = updates.gastos_pagos && updates.gastos_pagos.find(gp => gp.tipo === g.tipo);
+        const estilo = pago ? 'text-decoration:line-through;opacity:0.6;color:#4CAF50' : '';
+        
+        // Se for imposto, mostrar detalhamento do cálculo
+        if (g.tipo === 'imposto') {
+          html += `<div style="font-size:11px;color:#666;margin-bottom:8px;line-height:1.5">
+            <div>BRL 6%: ${fmt(receitasBRL)} × 6% = ${fmt(receitasBRL * 0.06)}</div>
+            <div>USD 3%: ${fmt(receitasUSD)} × 3% = ${fmt(receitasUSD * 0.03)}</div>
+          </div>`;
+        }
+        
+        html += `<div style="display:flex;justify-content:space-between;margin-bottom:4px;${estilo}">
+          <span>${g.nome}</span>
+          <span class="${pago?'pos':'neg'}">${fmt(g.valor)}</span>
+        </div>`;
+        
+        total += g.valor;
+        if(pago) paid += g.valor;
+      });
+    } else {
+      // OUTRAS CATEGORIAS - LÓGICA NORMAL
+      GASTOS_FIXOS[cat].forEach(g => {
+        // Para itens com data específica (faxina, gasolina, gastos extras)
+        // Verificar se o dia já passou para marcar como pago automaticamente
+        let pago = updates.gastos_pagos && updates.gastos_pagos.find(gp => gp.tipo === g.tipo);
+        
+        // Se o item tem propriedade 'passado', marcar como pago se verdadeiro
+        if (g.passado) {
+          pago = true;
+        }
+        
+        const estilo = pago ? 'text-decoration:line-through;opacity:0.6;color:#4CAF50' : '';
+        
+        html += `<div style="display:flex;justify-content:space-between;margin-bottom:4px;${estilo}">
+          <span>${g.nome}</span>
+          <span class="${pago?'pos':'neg'}">${fmt(g.valor)}</span>
+        </div>`;
+        
+        total += g.valor;
+        if(pago) paid += g.valor;
+      });
+    }
+    
+    const remaining = total - paid;
+    
+    document.getElementById('gastos'+cat.charAt(0).toUpperCase()+cat.slice(1)).innerHTML = html;
+    document.getElementById('total'+cat.charAt(0).toUpperCase()+cat.slice(1)).textContent = fmt(total);
+    document.getElementById('paid'+cat.charAt(0).toUpperCase()+cat.slice(1)).textContent = fmt(paid);
+    document.getElementById('remaining'+cat.charAt(0).toUpperCase()+cat.slice(1)).textContent = fmt(remaining);
+    
+    gastosAPagarCorreto += remaining;
+    gastoFixoTotal += total;
+    gastosPagosCorreto += paid;
+  });
+  
+  // Recalcular totalPago com valores reais
+  const totalPagoCorreto = gastosPagosCorreto + cartoesPagos + empPagos;
+  
+  // Recalcular despesasTotal com valores reais
+  const despesasTotalCorreto = gastoFixoTotal + empTotal + cartoesTotal + SALDO_MES_ANTERIOR;
+  
+  // DESPESAS REAIS = Despesas Totais Correto + Déficit Anterior
+  const deficitAnterior = SALDO_ACUMULADO < 0 ? Math.abs(SALDO_ACUMULADO) : 0;
+  const despesasReais = despesasTotalCorreto + deficitAnterior;
+  
+  // Atualizar aPagar com o valor correto dos gastos (SEM saldo do mês anterior)
+  aPagar = gastosAPagarCorreto + cartoesAPagar + empAPagar + SALDO_MES_ANTERIOR;
+  
+  // RENDERIZAR CARDS com valores corretos
+  const monthBalance = aReceber - aPagar;
+  const monthBalanceColor = monthBalance >= 0 ? '#2E7D32' : '#D32F2F';
+  const monthBalanceBg = monthBalance >= 0 ? '#E8F5E9' : '#FFEBEE';
+  
+  document.getElementById('recTotals').innerHTML = `
+    <div class="tc" style="background:#F5F5F5;border-left:4px solid #424242">
+      <div class="tl">💰 Current Amount</div>
+      <div class="tv" style="color:#212121">${fmt(SALDO_ACUMULADO)}</div>
+      <div class="ts">Saldo de ${mesAnterior||'Meses Anteriores'}</div>
+    </div>
+    <div class="tc" style="background:#E3F2FD;border-left:4px solid #1976D2"><div class="tl">Income (Total)</div><div class="tv" style="color:#1976D2">${fmt(receitaBruta)}</div><div class="ts">Receita Bruta Total</div></div>
+    <div class="tc" style="background:#E8F5E9;border-left:4px solid #2E7D32"><div class="tl">Income (Received)</div><div class="tv" style="color:#2E7D32">${fmt(totalRecebido)}</div><div class="ts">${paidWallace > 0 || paidBianca > 0 ? (updates.recebimentos?.length || 0) : 0} recebimento(s)</div></div>
+    <div class="tc" style="background:#E3F2FD;border-left:4px solid #1565C0"><div class="tl">Income (Schedule)</div><div class="tv" style="color:#1565C0">${fmt(aReceber)}</div><div class="ts">A Receber</div></div>
+    <div class="tc" style="background:${monthBalanceBg};border-left:4px solid ${monthBalanceColor}"><div class="tl">Month Balance</div><div class="tv" style="color:${monthBalanceColor}">${fmt(monthBalance)}</div><div class="ts">Income Schedule − Expenses Remaining</div></div>
+    <div class="tc" style="background:#FFEBEE;border-left:4px solid #D32F2F"><div class="tl">Expenses (Total)</div><div class="tv" style="color:#D32F2F">${fmt(despesasTotalCorreto)}</div><div class="ts">Fixos + Imposto + Cartões + Emp</div></div>
+    <div class="tc" style="background:#F1F8E9;border-left:4px solid #558B2F"><div class="tl">Expenses (Paid)</div><div class="tv" style="color:#558B2F">${fmt(totalPagoCorreto)}</div><div class="ts">Pagos</div></div>
+    <div class="tc" style="background:#FCE4EC;border-left:4px solid #C2185B"><div class="tl">Expenses (Remaining)</div><div class="tv" style="color:#C2185B">${fmt(aPagar)}</div><div class="ts">A Pagar</div></div>`;
+  
+  window.MONTH_BALANCE_CACHE[mes] = monthBalance;
+  const saldoMes = aReceber - aPagar;
+  const saldoFinal = SALDO_ACUMULADO + saldoMes;
+  document.getElementById('saldoAlert').innerHTML = saldoFinal >= 0 ? `💰 <strong>Saldo Final:</strong> ${fmt(saldoFinal)}` : `⚠️ <strong>Déficit Acumulado:</strong> ${fmt(saldoFinal)}`;
+  document.getElementById('saldoAlert').className = saldoFinal >= 0 ? 'alert-green' : 'alert';
+  
+  // GASTOS CARTÕES
+  let cartoesHtml='';
+  CARDS.forEach(c=>{
+    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mesNome);
+    if(f&&f.val>0){
+      const pago=updates.cartoes_pagos.includes(c.id);
+      const estilo=pago?'text-decoration:line-through;opacity:0.6;color:#4CAF50':'';
+      cartoesHtml+=`<div id="cartao-${c.id}" style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;${estilo}">
+        <span>${pago?'✓ ':''}${c.nome}</span>
+        <span class="${pago?'pos':'neg'}">${fmt(f.val)}</span>
+      </div>`;
+    }
+  });
+  
+  document.getElementById('gastosCartoes').innerHTML=cartoesHtml||'<div style="font-size:13px;color:#888">Sem faturas</div>';
+  document.getElementById('subtotalCartoes').textContent = fmt(cartoesTotal);
+  document.getElementById('paidCartoes').textContent = fmt(cartoesPagos);
+  document.getElementById('remainingCartoes').textContent = fmt(cartoesTotal - cartoesPagos);
+  
+  // GASTOS EMPRÉSTIMOS - adicionar IDs
+  let empHtml='';
+  EMPRESTIMOS.forEach(e=>{
+    const v=EMP_PARCELAS[e.id][mk]||0;
+    if(v>0){
+      const pago=updates.emprestimos_pagos.includes(e.id);
+      const estilo=pago?'text-decoration:line-through;opacity:0.6;color:#4CAF50':'';
+      empHtml+=`<div id="emp-${e.id}" style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;${estilo}">
+        <span style="color:${pago?'#4CAF50':'#212121'}">${e.nome}</span>
+        <span class="${pago?'pos':'neg'}">${fmt(v)}</span>
+      </div>`;
+    }
+  });
+  document.getElementById('gastosEmprestimos').innerHTML=empHtml||'<div style="font-size:13px;color:#888">Sem parcelas</div>';
+  document.getElementById('totalEmpMes').textContent=fmt(empTotal);
+  document.getElementById('paidEmprestimos').textContent=fmt(empPagos);
+  document.getElementById('remainingEmprestimos').textContent=fmt(empTotal - empPagos);
+  document.getElementById('totalGastosMes').textContent=fmt(despesasTotalCorreto);
+  
+  // REMOVER SUBTOTAIS ANTIGOS (agora são calculados dinamicamente acima)
+  
+  // TABELA RESUMO
+  const incluiTID=false; // Trips/Investimento/Dízimo só a partir de 2027
+  document.getElementById('resumoTabela').innerHTML=`
+    <thead><tr><th>Item</th><th class="r">Valor</th><th class="r">%</th></tr></thead>
+    <tbody>
+      <tr><td>Saldo Anterior</td><td class="r ${SALDO_ACUMULADO>=0?'pos':'neg'}">${fmt(SALDO_ACUMULADO)}</td><td class="r">—</td></tr>
+      <tr><td class="pos">Receita Bruta</td><td class="r pos">${fmt(receitaBruta)}</td><td class="r">100%</td></tr>
+      <tr><td class="pos">Já Recebido</td><td class="r pos">+ ${fmt(totalRecebido)}</td><td class="r">${Math.round(totalRecebido/receitaBruta*100)}%</td></tr>
+      <tr><td>A Receber</td><td class="r">${fmt(aReceber)}</td><td class="r">${Math.round(aReceber/receitaBruta*100)}%</td></tr>
+      <tr><td class="neg">Despesas Totais</td><td class="r neg">− ${fmt(despesasTotalCorreto)}</td><td class="r neg">${Math.round(despesasTotalCorreto/receitaBruta*100)}%</td></tr>
+      <tr style="background:#EDE7F6"><td class="neg"><strong>Despesas Reais</strong></td><td class="r neg"><strong>− ${fmt(despesasReais)}</strong></td><td class="r neg"><strong>${Math.round(despesasReais/receitaBruta*100)}%</strong></td></tr>
+      <tr><td class="pos">Já Pago</td><td class="r pos">+ ${fmt(totalPagoCorreto)}</td><td class="r">${Math.round(totalPagoCorreto/receitaBruta*100)}%</td></tr>
+      <tr class="subtotal"><td>Saldo do Mês</td><td class="r ${saldoMes>=0?'pos':'neg'}">${fmt(saldoMes)}</td><td class="r">—</td></tr>
+      <tr class="subtotal" style="background:#FFF3E0"><td><strong>Saldo Final</strong></td><td class="r ${saldoFinal>=0?'pos':'neg'}"><strong>${fmt(saldoFinal)}</strong></td><td class="r">—</td></tr>
+    </tbody>`;
+  
+  // PRÓXIMAS CONTAS A PAGAR
+  const hoje = new Date();
+  const diaHoje = hoje.getDate();
+  const mesHoje = hoje.getMonth() + 1; // 1-12
+  const anoHoje = hoje.getFullYear();
+  
+  // Coletar todas as contas com dia de vencimento
+  const todasContas = [];
+  
+  // Adicionar gastos fixos de CASA, ESTUDOS, SAÚDE, FISCAL
+  GASTOS_FIXOS.casa.forEach(g => {
+    const match = g.nome.match(/\((\d+)\)/);
+    if(match) {
+      const dia = parseInt(match[1]);
+      todasContas.push({nome: g.nome, valor: g.valor, dia: dia, tipo: 'CASA'});
+    }
+  });
+  
+  GASTOS_FIXOS.estudos.forEach(g => {
+    const match = g.nome.match(/\((\d+)\)/);
+    if(match) {
+      const dia = parseInt(match[1]);
+      todasContas.push({nome: g.nome, valor: g.valor, dia: dia, tipo: 'ESTUDOS'});
+    }
+  });
+  
+  GASTOS_FIXOS.saude.forEach(g => {
+    const match = g.nome.match(/\((\d+)\)/);
+    if(match) {
+      const dia = parseInt(match[1]);
+      todasContas.push({nome: g.nome, valor: g.valor, dia: dia, tipo: 'SAÚDE'});
+    }
+  });
+  
+  GASTOS_FIXOS.fiscal.forEach(g => {
+    const match = g.nome.match(/\((\d+)\)/);
+    if(match) {
+      const dia = parseInt(match[1]);
+      todasContas.push({nome: g.nome, valor: g.valor, dia: dia, tipo: 'FISCAL'});
+    }
+  });
+  
+  // Adicionar cartões com dia de vencimento
+  CARDS.forEach(c => {
+    if(c.dia) {
+      const fatura = FATURAS.find(x => x.card === c.id && x.mes === mesKey);
+      if(fatura && fatura.val > 0) {
+        todasContas.push({nome: c.nome, valor: fatura.val, dia: c.dia, tipo: 'CARTÃO'});
+      }
+    }
+  });
+  
+  // Filtrar apenas contas futuras (dia >= hoje) ou já do próximo mês
+  const contasFuturas = todasContas.filter(c => c.dia >= diaHoje).sort((a, b) => a.dia - b.dia);
+  
+  // Renderizar
+  let html = '<div style="display:grid;gap:8px">';
+  contasFuturas.slice(0, 5).forEach(c => {
+    const cor = c.tipo === 'CARTÃO' ? '#9C27B0' : c.tipo === 'CASA' ? '#F57F17' : c.tipo === 'FISCAL' ? '#D32F2F' : '#666';
+    html += `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#f9f9f9;border-left:3px solid ${cor};border-radius:4px">
+        <div>
+          <div style="font-weight:600;margin-bottom:2px">${c.nome}</div>
+          <div style="font-size:11px;color:#666">${c.tipo} • Dia ${String(c.dia).padStart(2, '0')}</div>
+        </div>
+        <div style="font-weight:700;color:#D32F2F">${fmt(c.valor)}</div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  
+  if(contasFuturas.length === 0) {
+    html = '<div style="text-align:center;color:#999;padding:20px">Nenhuma conta futura encontrada neste mês</div>';
+  }
+  
+  document.getElementById('proximasContas').innerHTML = html;
+  
+  // RISCAR GASTOS JÁ PAGOS
+  // Remover estilo de riscado de todos primeiro
+  ['fiap','remedios','dogs','psicologa','celular','internet','streams','carro','gasolina','aluguel','lote','energia','agua','faxina','piscina','gastos_extras','alimentacao','imposto','trips','dizimo','investimento'].forEach(tipo=>{
+    const el=document.getElementById('gasto-'+tipo);
+    if(el){
+      el.style.textDecoration='none';
+      el.style.opacity='1';
+      el.style.color='';
+    }
+  });
+  
+  // Aplicar estilo de riscado aos itens pagos
+  if(updates.gastos_pagos){
+    updates.gastos_pagos.forEach(g=>{
+      const el=document.getElementById('gasto-'+g.tipo);
+      if(el){
+        el.style.textDecoration='line-through';
+        el.style.opacity='0.6';
+        el.style.color='#4CAF50';
+      }
+    });
+  }
+}
+  
+
+function renderAcompanhamento() {
+  // Renderizar meses começando de Abril até Dezembro (9 meses)
+  const mesesParaRenderizar = [4, 5, 6, 7, 8, 9, 10, 11, 12]; // Abril a Dezembro
+  const mesesNomes = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+  
+  let html = '';
+  let totalMonthBalanceAcumulado = 0;
+  let totalAReceberAcumulado = 0;
+  let totalAPagarAcumulado = 0;
+  
+  mesesParaRenderizar.forEach(mesNum => {
+    const mesKey = MES_NOME[mesNum];
+    const updates = UPDATES[mesKey] || {cartoes_pagos:[], emprestimos_pagos:[], gastos_pagos:[], recebimentos:[]};
+    const mesNome = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'][mesNum] + '/26';
+    const mesNomeCompleto = mesesNomes[mesNum];
+    const ano = 2026;
+    
+    // ===== RECEITAS =====
+    const mm = MM_SCHED[mesNum] || {c: 2};
+    const mmUsd = mm.c * B_MM;
+    const mmBrl = mmUsd * RATE;
+    const mbBrl = B_MB * RATE;
+    const azAtivo = mesNum >= 5 ? B_AZ : 0;
+    const azBrl = azAtivo * RATE;
+    const bTotalUsd = mmUsd + B_MB + azAtivo;
+    const bTotalBrl = bTotalUsd * RATE;
+    
+    // Receitas pontuais
+    const caucaoAbril = mesNum === 4 ? 1682 : 0;
+    const r2Abril = mesNum === 4 ? 8000 : 0;
+    const paretoAbril = mesNum === 4 ? 4000 : 0;
+    const ifoodPLRMaio = mesNum === 5 ? 4500 : 0;
+    const mindBodyMaio = mesNum === 5 ? 1400 : 0;
+    const mindBodyMaioBrl = mindBodyMaio * RATE;
+    
+    // receitaBruta agora é calculada no loop de receitasLista (incluindo saldo anterior)
+    
+    // Calcular imposto
+    const receitasBRL = W_PJ + r2Abril + paretoAbril + caucaoAbril;
+    const receitasUSD = mmBrl + mbBrl + mindBodyMaioBrl + azBrl;
+    const impostoMes = (receitasBRL * 0.06) + (receitasUSD * 0.03);
+    
+    // ===== GASTOS FIXOS =====
+    const quintasFeiras = getQuintasFeiras(mesNum, ano);
+    const sextasFeiras = getSextasFeiras(mesNum, ano);
+    
+    const faxinas = quintasFeiras.map(dia => ({
+      tipo: `faxina_${dia}`,
+      nome: `Faxina`,
+      valor: 200,
+      dia: dia,
+      categoria: 'casa'
+    }));
+    
+    const gasolinas = [1, 10, 20].map(dia => ({
+      tipo: `gasolina_${dia}`,
+      nome: `Gasolina`,
+      valor: 800 / 3,
+      dia: dia,
+      categoria: 'casa'
+    }));
+    
+    const gastosExtras = sextasFeiras.map(dia => ({
+      tipo: `gastos_extras_${dia}`,
+      nome: `Gastos Extras`,
+      valor: 2000 / sextasFeiras.length,
+      dia: dia,
+      categoria: 'casa'
+    }));
+    
+    const gastosFixos = [
+      ...gasolinas,
+      ...faxinas,
+      ...gastosExtras,
+      {tipo: 'aluguel', nome: 'Aluguel', valor: 6300, dia: 5, categoria: 'casa'},
+      {tipo: 'dogs', nome: 'Dogs', valor: 400, dia: 5, categoria: 'casa'},
+      {tipo: 'lote', nome: 'Lote', valor: 1202, dia: 9, categoria: 'casa'},
+      {tipo: 'piscina', nome: 'Piscina', valor: 175, dia: 10, categoria: 'casa'},
+      {tipo: 'alimentacao', nome: 'Alimentação', valor: 1000, dia: 10, categoria: 'casa'},
+      {tipo: 'carro', nome: 'Carro', valor: 3099, dia: 15, categoria: 'casa'},
+      {tipo: 'streams', nome: 'Streams', valor: 557, dia: 20, categoria: 'casa'},
+      {tipo: 'celular', nome: 'Celular', valor: 210, dia: 25, categoria: 'casa'},
+      {tipo: 'internet', nome: 'Internet', valor: 170, dia: 25, categoria: 'casa'},
+      {tipo: 'energia', nome: 'Energia', valor: 400, dia: 30, categoria: 'casa'},
+      {tipo: 'agua', nome: 'Água', valor: 300, dia: 30, categoria: 'casa'},
+      {tipo: 'fiap', nome: 'FIAP', valor: mesNum === 5 ? 0 : 580, dia: 30, categoria: 'estudos'},
+      {tipo: 'remedios', nome: 'Remédios', valor: 500, dia: 5, categoria: 'saude'},
+      {tipo: 'psicologa', nome: 'Psicóloga', valor: 1160, dia: 10, categoria: 'saude'},
+      {tipo: 'imposto', nome: 'Imposto', valor: impostoMes, dia: 20, categoria: 'fiscal'},
+      {tipo: 'contabilidade', nome: 'Contabilidade', valor: 534, dia: 20, categoria: 'fiscal'},
+      {tipo: 'multa', nome: `Multa ${mesNum + 2}/24`, valor: 328, dia: 30, categoria: 'fiscal'}
+    ];
+    
+    // ===== CARTÕES =====
+    const cartoesLista = [];
+    let cartoesTotal = 0;
+    let cartoesPagos = 0;
+    let cartoesAPagar = 0;
+    
+    CARDS.forEach(c => {
+      const f = FATURAS.find(x => x.card === c.id && x.mes === mesNome);
+      if (f && f.val > 0) {
+        const pago = updates.cartoes_pagos.includes(c.id);
+        const vencido = isDiaPassado(c.dia, mesNum, ano) && !pago;
+        
+        cartoesLista.push({
+          nome: c.nome, 
+          valor: f.val, 
+          pago: pago, 
+          vencido: vencido,
+          dia: c.dia, 
+          categoria: 'cartoes'
+        });
+        
+        cartoesTotal += f.val;
+        if (pago) {
+          cartoesPagos += f.val;
+        } else {
+          cartoesAPagar += f.val;
+        }
+      }
+    });
+    
+    // Ordenar cartões por dia
+    cartoesLista.sort((a, b) => a.dia - b.dia);
+    
+    // ===== EMPRÉSTIMOS =====
+    const mk = ['', 'jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'][mesNum];
+    const empLista = [];
+    let empTotal = 0;
+    let empPagos = 0;
+    let empAPagar = 0;
+    
+    // Mapear empréstimos com seus dias de vencimento
+    const empDias = {
+      'itau_b': 1,   // Itau Bianca - vencimento dia 01
+      'brb_b': 7,    // BRB - vencimento dia 07
+      'brb_b2': 7,   // BRB 2 - vencimento dia 07
+      'b5': 20,      // Banco do Brasil - vencimento dia 20
+      'mp2': 20,     // Mercado Pago 2 - vencimento dia 20
+      'mp1': 7,      // Mercado Pago 1 - vencimento dia 07
+      'itau_w': 5    // Itau Wallace - vencimento dia 05
+    };
+    
+    EMPRESTIMOS.forEach(e => {
+      const v = EMP_PARCELAS[e.id][mk] || 0;
+      if (v > 0) {
+        const pago = updates.emprestimos_pagos.includes(e.id);
+        const dia = empDias[e.id] || 15;
+        const vencido = isDiaPassado(dia, mesNum, ano) && !pago;
+        
+        empLista.push({
+          nome: e.nome, 
+          valor: v, 
+          pago: pago, 
+          vencido: vencido,
+          dia: dia, 
+          categoria: 'emprestimos'
+        });
+        
+        empTotal += v;
+        if (pago) {
+          empPagos += v;
+        } else {
+          empAPagar += v;
+        }
+      }
+    });
+    
+    // Ordenar empréstimos por dia
+    empLista.sort((a, b) => a.dia - b.dia);
+    
+    // ===== CALCULAR SALDO ANTERIOR PRIMEIRO =====
+    let currentAmount = 0; // Sempre zerado - espera input manual
+    let saldoMesAnterior = 0;
+    
+    if (mesNum > 4) {
+      const monthBalanceAnt = window.MONTH_BALANCE_CACHE?.[mesNum - 1] || 0;
+      if (monthBalanceAnt >= 0) {
+        // Saldo positivo vira income (não marca currentAmount)
+        currentAmount = 0; // Continua zerado
+      } else {
+        // Saldo negativo vira dívida
+        saldoMesAnterior = Math.abs(monthBalanceAnt);
+      }
+    }
+    
+    // ===== GASTOS FIXOS - VERIFICAR PAGOS E ORGANIZAR POR CATEGORIA =====
+    let gastosFixosPagos = 0;
+    let gastosFixosAPagar = 0;
+    let gastosFixosTotal = 0;
+    
+    gastosFixos.forEach(g => {
+      // Verificar se está marcado como pago nos UPDATES (fonte única de verdade)
+      const pago = updates.gastos_pagos && updates.gastos_pagos.find(gp => gp.tipo === g.tipo);
+      
+      // Verificar se o dia já passou (para marcar como vencido se não foi pago)
+      let vencido = false;
+      if (g.dia) {
+        vencido = isDiaPassado(g.dia, mesNum, ano);
+      }
+      
+      g.pago = !!pago;
+      g.vencido = vencido && !pago; // Vencido = dia passou MAS não foi pago
+      
+      gastosFixosTotal += g.valor;
+      if (pago) {
+        gastosFixosPagos += g.valor;
+      } else {
+        gastosFixosAPagar += g.valor;
+      }
+    });
+    
+    // Adicionar saldo anterior negativo (dívida) como gasto na categoria "outros"
+    if (saldoMesAnterior > 0) {
+      gastosFixos.push({
+        tipo: 'saldo_mes_anterior',
+        nome: 'Saldo Mês Anterior (Dívida)',
+        valor: saldoMesAnterior,
+        dia: 1,
+        categoria: 'outros',
+        pago: false,
+        vencido: false
+      });
+      gastosFixosTotal += saldoMesAnterior;
+      gastosFixosAPagar += saldoMesAnterior;
+    }
+    
+    // Separar por categoria e ordenar por dia
+    const gastosPorCategoria = {
+      emprestimos: empLista.sort((a, b) => a.dia - b.dia),
+      casa: gastosFixos.filter(g => g.categoria === 'casa' && g.valor > 0).sort((a, b) => a.dia - b.dia),
+      estudos: gastosFixos.filter(g => g.categoria === 'estudos' && g.valor > 0).sort((a, b) => a.dia - b.dia),
+      saude: gastosFixos.filter(g => g.categoria === 'saude' && g.valor > 0).sort((a, b) => a.dia - b.dia),
+      fiscal: gastosFixos.filter(g => g.categoria === 'fiscal' && g.valor > 0).sort((a, b) => a.dia - b.dia),
+      outros: gastosFixos.filter(g => g.categoria === 'outros' && g.valor > 0).sort((a, b) => a.dia - b.dia),
+      cartoes: cartoesLista.sort((a, b) => a.dia - b.dia)
+    };
+    
+    const totalGastosFixos = gastosFixosTotal;
+    
+    // ===== RECEITAS - VERIFICAR RECEBIDOS =====
+    const receitasLista = [
+      {tipo: 'wallace_pj', nome: 'PL (Wallace)', valor: W_PJ},
+      {tipo: 'ifood_15', nome: 'iFood 15 (Wallace)', valor: W_IFOOD / 2},
+      {tipo: 'ifood_30', nome: 'iFood 30 (Wallace)', valor: W_IFOOD / 2}
+    ];
+    
+    if (mesNum === 4) {
+      receitasLista.push({tipo: 'caucao', nome: 'Caução (Wallace)', valor: caucaoAbril});
+      receitasLista.push({tipo: 'r2', nome: 'R2 (Wallace)', valor: r2Abril});
+    }
+    
+    if (mesNum === 5) {
+      receitasLista.push({tipo: 'ifood_plr', nome: 'iFood PLR (Wallace)', valor: ifoodPLRMaio});
+    }
+    
+    receitasLista.push({tipo: 'mastermind', nome: `MasterMind (Bianca) ${mm.c}×`, valor: mmBrl});
+    receitasLista.push({tipo: 'mind_body', nome: 'Mind Body Green (Bianca)', valor: mbBrl});
+    
+    if (mesNum === 4) {
+      receitasLista.push({tipo: 'pareto', nome: 'Pareto (Bianca)', valor: paretoAbril});
+    }
+    
+    if (mesNum === 5) {
+      receitasLista.push({tipo: 'mind_body_maio', nome: 'Mind Body Green Extra (Bianca)', valor: mindBodyMaioBrl});
+    }
+    
+    if (mesNum >= 5) {
+      receitasLista.push({tipo: 'above_zero', nome: 'Above Zero (Bianca)', valor: azBrl});
+    }
+    
+    // Adicionar saldo anterior positivo como receita (NÃO recebido ainda - precisa de update manual)
+    if (mesNum > 4) {
+      const monthBalanceAnt = window.MONTH_BALANCE_CACHE?.[mesNum - 1] || 0;
+      if (monthBalanceAnt > 0) {
+        receitasLista.push({
+          tipo: 'saldo_mes_anterior_positivo',
+          nome: 'Saldo Mês Anterior',
+          valor: monthBalanceAnt
+        });
+      }
+    }
+    
+    let receitasRecebidas = 0;
+    let receitaBruta = 0; // Calcular como soma de todas as receitas
+    
+    receitasLista.forEach(r => {
+      receitaBruta += r.valor; // Somar TODAS as receitas (incluindo saldo anterior)
+      
+      const recebido = updates.recebimentos && updates.recebimentos.find(rec => rec.tipo === r.tipo);
+      r.recebido = !!recebido;
+      if (recebido) receitasRecebidas += r.valor;
+      
+      // Marcar como vencido se passou a data mas não foi recebido
+      // (simplificado: considerar que passou se já estamos no dia 20 ou depois)
+      r.vencido = false; // Receitas não marcamos como vencidas por enquanto
+    });
+    
+    // ===== CÁLCULOS FINAIS =====
+    // A Pagar = gastosAPagarCorreto + cartoesAPagar + empAPagar
+    // (saldoMesAnterior já está incluído em gastosFixosAPagar quando adicionado como item)
+    const aPagar = gastosFixosAPagar + cartoesAPagar + empAPagar;
+    
+    // Debug para Abril
+    if (mesNum === 4) {
+      console.log('=== DEBUG ABRIL - DETALHADO ===');
+      console.log('--- GASTOS FIXOS ---');
+      console.log('gastosFixosTotal:', gastosFixosTotal);
+      console.log('gastosFixosPagos:', gastosFixosPagos);
+      console.log('gastosFixosAPagar:', gastosFixosAPagar);
+      gastosFixos.forEach(g => {
+        if (!g.pago && g.valor > 0) {
+          console.log(`  ${g.nome}: R$ ${g.valor} (não pago)`);
+        }
+      });
+      
+      console.log('--- CARTÕES ---');
+      console.log('cartoesTotal:', cartoesTotal);
+      console.log('cartoesPagos:', cartoesPagos);
+      console.log('cartoesAPagar:', cartoesAPagar);
+      
+      console.log('--- EMPRÉSTIMOS ---');
+      console.log('empTotal:', empTotal);
+      console.log('empPagos:', empPagos);
+      console.log('empAPagar:', empAPagar);
+      
+      console.log('--- SALDO MÊS ANTERIOR ---');
+      console.log('saldoMesAnterior:', saldoMesAnterior);
+      
+      console.log('--- TOTAL A PAGAR ---');
+      console.log('A Pagar Total:', aPagar);
+      console.log('Deveria ser: 26.437,04');
+      console.log('Diferença:', aPagar - 26437.04);
+    }
+    
+    // A Receber
+    const aReceber = receitaBruta - receitasRecebidas;
+    
+    // Month Balance
+    const monthBalance = aReceber - aPagar;
+    
+    // Salvar no cache para o próximo mês usar
+    if (!window.MONTH_BALANCE_CACHE) window.MONTH_BALANCE_CACHE = {};
+    window.MONTH_BALANCE_CACHE[mesNum] = monthBalance;
+    
+    totalMonthBalanceAcumulado += monthBalance;
+    totalAReceberAcumulado += aReceber;
+    totalAPagarAcumulado += aPagar;
+    
+    // ===== RENDERIZAR HTML =====
+    // Definir cor do card:
+    // - Mês atual (Abril = 4) = Azul
+    // - Month Balance negativo = Vermelho
+    // - Month Balance positivo = Verde
+    const mesAtual = 4; // Abril é o mês atual
+    let bgColor;
+    
+    if (mesNum === mesAtual) {
+      bgColor = '#0a4a8a'; // Azul - mês atual
+    } else if (monthBalance < 0) {
+      bgColor = '#8e2323'; // Vermelho - negativo
+    } else {
+      bgColor = '#376637'; // Verde - positivo
+    }
+    
+    html += `
+      <div style="background:${bgColor};color:#fff;border-radius:10px;padding:1rem;font-size:11px;display:flex;flex-direction:column;min-height:600px">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:0.8rem;text-align:center">${mesNomeCompleto}</h3>
+        
+        <!-- CONTAS (EXPENSES) -->
+        <div style="margin-bottom:1rem;flex:1">
+          <div style="font-weight:700;margin-bottom:6px;color:rgba(255,255,255,0.9);font-size:11px">Contas</div>
+          
+          ${gastosPorCategoria.emprestimos.length > 0 ? `
+            <div style="margin-bottom:8px">
+              <div style="font-size:10px;font-weight:600;opacity:0.7;margin-bottom:4px">EMPRÉSTIMOS</div>
+              ${gastosPorCategoria.emprestimos.map(e => renderItemAcomp(`${e.nome} (${String(e.dia).padStart(2, '0')})`, e.valor, e.pago, e.vencido)).join('')}
+              <div style="border-bottom:1px solid rgba(255,255,255,0.15);margin:8px 0"></div>
+            </div>
+          ` : ''}
+          
+          ${gastosPorCategoria.casa.length > 0 ? `
+            <div style="margin-bottom:8px">
+              <div style="font-size:10px;font-weight:600;opacity:0.7;margin-bottom:4px">CASA</div>
+              ${gastosPorCategoria.casa.map(g => renderItemAcomp(`${g.nome} (${String(g.dia).padStart(2, '0')})`, g.valor, g.pago, g.vencido)).join('')}
+              <div style="border-bottom:1px solid rgba(255,255,255,0.15);margin:8px 0"></div>
+            </div>
+          ` : ''}
+          
+          ${gastosPorCategoria.estudos.length > 0 ? `
+            <div style="margin-bottom:8px">
+              <div style="font-size:10px;font-weight:600;opacity:0.7;margin-bottom:4px">ESTUDOS</div>
+              ${gastosPorCategoria.estudos.map(g => renderItemAcomp(`${g.nome} (${String(g.dia).padStart(2, '0')})`, g.valor, g.pago, g.vencido)).join('')}
+              <div style="border-bottom:1px solid rgba(255,255,255,0.15);margin:8px 0"></div>
+            </div>
+          ` : ''}
+          
+          ${gastosPorCategoria.saude.length > 0 ? `
+            <div style="margin-bottom:8px">
+              <div style="font-size:10px;font-weight:600;opacity:0.7;margin-bottom:4px">SAÚDE</div>
+              ${gastosPorCategoria.saude.map(g => renderItemAcomp(`${g.nome} (${String(g.dia).padStart(2, '0')})`, g.valor, g.pago, g.vencido)).join('')}
+              <div style="border-bottom:1px solid rgba(255,255,255,0.15);margin:8px 0"></div>
+            </div>
+          ` : ''}
+          
+          ${gastosPorCategoria.fiscal.length > 0 ? `
+            <div style="margin-bottom:8px">
+              <div style="font-size:10px;font-weight:600;opacity:0.7;margin-bottom:4px">FISCAL</div>
+              ${gastosPorCategoria.fiscal.map(g => renderItemAcomp(`${g.nome} (${String(g.dia).padStart(2, '0')})`, g.valor, g.pago, g.vencido)).join('')}
+              <div style="border-bottom:1px solid rgba(255,255,255,0.15);margin:8px 0"></div>
+            </div>
+          ` : ''}
+          
+          ${gastosPorCategoria.cartoes.length > 0 ? `
+            <div style="margin-bottom:8px">
+              <div style="font-size:10px;font-weight:600;opacity:0.7;margin-bottom:4px">CARTÕES</div>
+              ${gastosPorCategoria.cartoes.map(c => renderItemAcomp(`${c.nome} (${String(c.dia).padStart(2, '0')})`, c.valor, c.pago, c.vencido)).join('')}
+              <div style="border-bottom:1px solid rgba(255,255,255,0.15);margin:8px 0"></div>
+            </div>
+          ` : ''}
+          
+          ${gastosPorCategoria.outros.length > 0 ? `
+            <div style="margin-bottom:8px">
+              <div style="font-size:10px;font-weight:600;opacity:0.7;margin-bottom:4px">OUTROS</div>
+              ${gastosPorCategoria.outros.map(g => renderItemAcomp(`${g.nome} (${String(g.dia).padStart(2, '0')})`, g.valor, g.pago, g.vencido)).join('')}
+            </div>
+          ` : ''}
+        </div>
+        
+        <!-- INCOME -->
+        <div style="margin-bottom:1rem;padding-top:0.8rem;border-top:1px solid rgba(255,255,255,0.2)">
+          <div style="font-weight:700;margin-bottom:6px;color:rgba(255,255,255,0.9);font-size:11px">Income</div>
+          ${receitasLista.map(r => renderItemAcomp(r.nome, r.valor, r.recebido, r.vencido)).join('')}
+        </div>
+        
+        <!-- TOTAIS -->
+        <div style="background:rgba(255,255,255,0.12);border-radius:8px;padding:0.8rem;margin-top:1rem">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px">
+            <span>Current Amount</span>
+            <span>${fmt(currentAmount)}</span>
+          </div>
+          
+          <div style="border-top:1px solid rgba(255,255,255,0.25);margin:8px 0;padding-top:8px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-weight:700">
+              <span>A Receber</span>
+              <span>${fmt(aReceber)}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-weight:700">
+              <span>A Pagar</span>
+              <span>${fmt(aPagar)}</span>
+            </div>
+          </div>
+          
+          <div style="background:${monthBalance >= 0 ? 'rgba(76,175,80,0.3)' : 'rgba(244,67,54,0.3)'};border-radius:6px;padding:8px;margin-top:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:12px;font-weight:700">Month Balance</span>
+              <span style="font-size:16px;font-weight:700">${fmt(monthBalance)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  
+  document.getElementById('acompanhamentoGrid').innerHTML = html;
+}
+
+function renderItemAcomp(nome, valor, pago = false, vencido = false) {
+  if (valor === 0) return '';
+  
+  let estilo = '';
+  if (pago) {
+    // Pago = Verde riscado
+    estilo = 'text-decoration:line-through;opacity:0.6;color:rgba(76,175,80,0.9)';
+  } else if (vencido) {
+    // Vencido (dia passou mas não foi pago) = Amarelo com destaque
+    estilo = 'background:rgba(255,193,7,0.2);color:rgba(255,193,7,1);font-weight:600;padding:2px 4px;border-radius:3px';
+  }
+  
+  return `<div style="display:flex;justify-content:space-between;margin-bottom:2px;${estilo}">
+    <span>${nome}</span>
+    <span>${fmt(valor)}</span>
+  </div>`;
+}
+
+function renderEmprestimos(){
+  const mes = parseInt(document.getElementById('mesEmp').value);
+  const mk = ['','jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][mes];
+  
+  // Calcular total do mês
+  let totalMes = 0;
+  EMPRESTIMOS.forEach(e => {
+    const v = EMP_PARCELAS[e.id][mk] || 0;
+    totalMes += v;
+  });
+  
+  // Card de total + Cards individuais
+  let cardsHTML = `<div class="metric" style="background:#E3F2FD;border-left:4px solid #1976D2">
+    <div class="metric-label" style="font-weight:700">Total do Mês</div>
+    <div class="metric-value" style="color:#1976D2">${fmt(totalMes)}</div>
+  </div>`;
+  
+  cardsHTML += EMPRESTIMOS.map(e=>{
+    const isPago=PAGAMENTOS.emprestimos.includes(e.id);
+    const bg=isPago?'#E8F5E9':'#fff';
+    const check=isPago?'✓ ':'';
+    
+    // Calcular parcela atual
+    let parcelaInfo = '';
+    if (EMP_PARCELAS_INFO[e.id]) {
+      const mesInicio = EMP_PARCELAS_INFO[e.id].mesInicio;
+      
+      // Se o mês atual é anterior ao início do empréstimo
+      if (mes < mesInicio) {
+        parcelaInfo = `<div style="font-size:11px;color:#888;margin-top:4px">Não iniciado</div>`;
+      } else {
+        const parcelaAtual = EMP_PARCELAS_INFO[e.id].parcelaAbril + (mes - 4);
+        const parcelaTotal = EMP_PARCELAS_INFO[e.id].total;
+        
+        // Se já foi quitado
+        if (parcelaAtual > parcelaTotal) {
+          parcelaInfo = `<div style="font-size:11px;color:#4CAF50;font-weight:700;margin-top:4px">✓ Quitado</div>`;
+        } else {
+          parcelaInfo = `<div style="font-size:11px;color:#888;margin-top:4px">${parcelaAtual}/${parcelaTotal}</div>`;
+        }
+      }
+    }
+    
+    return `<div class="metric" style="background:${bg}"><div class="metric-accent" style="background:${e.color}"></div><div class="metric-label">${check}${e.nome}</div><div class="metric-value" style="${isPago?'color:#2E7D32':''}">${fmt(e.valor)}</div>${parcelaInfo}</div>`;
+  }).join('');
+  
+  document.getElementById('empCards').innerHTML = cardsHTML;
+  
+  // Gráfico - sempre mostrar 2026
+  const meses = ['Abr/26','Mai/26','Jun/26','Jul/26','Ago/26','Set/26','Out/26','Nov/26','Dez/26'];
+  const mks = ['abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const totaisPorMes=meses.map((m,i)=>{
+    let tot=0;
+    EMPRESTIMOS.forEach(e=>{
+      const v=EMP_PARCELAS[e.id][mks[i]]||0;
+      tot+=v;
+    });
+    return tot;
+  });
+  
+  if(window.empChartInst)window.empChartInst.destroy();
+  const ctx=document.getElementById('empChart').getContext('2d');
+  window.empChartInst=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:meses,
+      datasets:[{label:'Total',data:totaisPorMes,backgroundColor:'#7C3AED55',borderColor:'#7C3AED',borderWidth:1.5}]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{font:{size:10}}},
+        y:{ticks:{font:{size:10},callback:v=>'R$ '+v.toLocaleString('pt-BR')}}
+      }
+    }
+  });
+  
+  // Tabela
+  let html='<thead><tr><th>Mês</th>';
+  EMPRESTIMOS.forEach(e=>html+=`<th class="r">${e.nome}</th>`);
+  html+='<th class="r">Total</th></tr></thead><tbody>';
+  
+  meses.forEach((m,i)=>{
+    html+=`<tr><td><strong>${m}</strong></td>`;
+    let tot=0;
+    EMPRESTIMOS.forEach(e=>{
+      const v=EMP_PARCELAS[e.id][mks[i]]||0;
+      tot+=v;
+      const isPago=m==='Abr/26'&&PAGAMENTOS.emprestimos.includes(e.id);
+      html+=`<td class="r" style="${isPago?'text-decoration:line-through;opacity:0.5':''}">${v?fmt(v):'—'}</td>`;
+    });
+    html+=`<td class="r" style="font-weight:700">${fmt(tot)}</td></tr>`;
+  });
+  html+='</tbody>';
+  document.getElementById('empTable').innerHTML=html;
+}
+
+function renderCartoes(){
+  const mes=document.getElementById('mesCards').value;
+  const meses=['Abr/26','Mai/26','Jun/26','Jul/26','Ago/26','Set/26','Out/26','Nov/26','Dez/26','Jan/27','Fev/27','Mar/27','Abr/27','Mai/27','Jun/27','Jul/27','Ago/27','Set/27','Out/27','Nov/27','Dez/27'];
+  const idx=meses.indexOf(mes);
+  const mesProx=meses[idx+1]||'—';
+  const mesNum=idx+4; // Abril/26=4, Maio/26=5, ..., Dez/26=12, Jan/27=13, etc
+  const mesKey=MES_NOME[mesNum>12?mesNum-12:mesNum]; // Ajustar para 2027
+  const updates=UPDATES[mesKey]||{cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]};
+  
+  document.getElementById('mesAtualLabel1').textContent=mes;
+  document.getElementById('mesProxLabel1').textContent=mesProx;
+  
+  // Calcular totais
+  const limTotal=CARDS.reduce((s,c)=>s+c.limite,0);
+  const fatAtual=CARDS.reduce((s,c)=>{
+    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mes);
+    return s+(f?f.val:0);
+  },0);
+  const fatProx=mesProx!=='—'?CARDS.reduce((s,c)=>{
+    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mesProx);
+    return s+(f?f.val:0);
+  },0):0;
+  
+  // Calcular cartões pagos e a pagar
+  const cartoesPagosVal=CARDS.reduce((s,c)=>{
+    if(!updates.cartoes_pagos.includes(c.id))return s;
+    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mes);
+    return s+(f?f.val:0);
+  },0);
+  const cartoesAPagar=fatAtual-cartoesPagosVal;
+  
+  // Calcular Limite Disponível = Limite Total - Soma de todas faturas em aberto de TODOS os meses
+  let emUsoTotal = 0;
+  CARDS.forEach(c => {
+    meses.forEach(m => {
+      const f = FATURAS.find(x => x.card === c.id && x.mes === m);
+      if (f) {
+        // Verificar se foi pago
+        const mesIdx = meses.indexOf(m);
+        let mesNumLoop, mesKeyLoop;
+        
+        if (mesIdx <= 8) {
+          // 2026: Abr=4, Mai=5, ..., Dez=12
+          mesNumLoop = mesIdx + 4;
+          mesKeyLoop = MES_NOME[mesNumLoop];
+          const updatesLoop = UPDATES[mesKeyLoop] || {cartoes_pagos:[]};
+          
+          if (!updatesLoop.cartoes_pagos.includes(c.id)) {
+            emUsoTotal += f.val;
+          }
+        } else if (mesIdx <= 11) {
+          // 2027 Jan-Mar: Jan=1, Fev=2, Mar=3
+          mesNumLoop = mesIdx - 8;
+          mesKeyLoop = MES_NOME[mesNumLoop];
+          const updatesLoop = UPDATES[mesKeyLoop] || {cartoes_pagos:[]};
+          
+          if (!updatesLoop.cartoes_pagos.includes(c.id)) {
+            emUsoTotal += f.val;
+          }
+        } else {
+          // 2027 Abr-Dez: Sempre contar (sem UPDATES)
+          emUsoTotal += f.val;
+        }
+      }
+    });
+  });
+  
+  const limiteDisponivel = limTotal - emUsoTotal;
+  
+  document.getElementById('limiteTotal').textContent=fmt(limTotal);
+  document.getElementById('faturaAtual').textContent=fmt(fatAtual);
+  document.getElementById('faturaProx').textContent=mesProx!=='—'?fmt(fatProx):'—';
+  document.getElementById('cartoesPagosCard').textContent=fmt(cartoesPagosVal);
+  document.getElementById('cartoesAPagarCard').textContent=fmt(cartoesAPagar);
+  document.getElementById('limiteDisponivel').textContent=fmt(limiteDisponivel);
+  document.getElementById('limiteEmUso').textContent='Em uso: '+fmt(emUsoTotal);
+  
+  // Cards individuais - calcular limite disponível de cada cartão E APLICAR FILTRO
+  document.getElementById('cardsGrid').innerHTML=CARDS
+    .filter(c => {
+      if (FILTRO_CARTAO === 'todos') return true;
+      return c.owner === FILTRO_CARTAO;
+    })
+    .map(c=>{
+    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mes);
+    const val=f?f.val:0;
+    const isPago=mes==='Abr/26'&&PAGAMENTOS.cartoes.includes(c.id);
+    
+    // Calcular quanto está em uso deste cartão em TODOS os meses
+    let emUsoCartao = 0;
+    meses.forEach(m => {
+      const fatura = FATURAS.find(x => x.card === c.id && x.mes === m);
+      if (fatura) {
+        const mesIdx = meses.indexOf(m);
+        let mesNumLoop, mesKeyLoop;
+        
+        if (mesIdx <= 8) {
+          // 2026: Abr=4, Mai=5, ..., Dez=12
+          mesNumLoop = mesIdx + 4;
+          mesKeyLoop = MES_NOME[mesNumLoop];
+          const updatesLoop = UPDATES[mesKeyLoop] || {cartoes_pagos:[]};
+          
+          if (!updatesLoop.cartoes_pagos.includes(c.id)) {
+            emUsoCartao += fatura.val;
+          }
+        } else if (mesIdx <= 11) {
+          // 2027 Jan-Mar: Jan=1, Fev=2, Mar=3
+          mesNumLoop = mesIdx - 8;
+          mesKeyLoop = MES_NOME[mesNumLoop];
+          const updatesLoop = UPDATES[mesKeyLoop] || {cartoes_pagos:[]};
+          
+          if (!updatesLoop.cartoes_pagos.includes(c.id)) {
+            emUsoCartao += fatura.val;
+          }
+        } else {
+          // 2027 Abr-Dez: Sempre contar (sem UPDATES)
+          emUsoCartao += fatura.val;
+        }
+      }
+    });
+    
+    const limiteDisponivelCartao = c.limite - emUsoCartao;
+    
+    // Cor do limite disponível: verde se positivo, cinza se zero, vermelho se negativo
+    let corDisponivel = '#388E3C'; // verde (padrão)
+    if (limiteDisponivelCartao < 0) {
+      corDisponivel = '#D32F2F'; // vermelho
+    } else if (limiteDisponivelCartao === 0) {
+      corDisponivel = '#757575'; // cinza
+    }
+    
+    const bg=isPago?'#E8F5E9':c.owner==='wallace'?'#E3F2FD':'#FCE4EC';
+    const accent=isPago?'#4CAF50':c.owner==='wallace'?'#1976D2':'#E91E63';
+    const check=isPago?'✓ ':'';
+    return `<div class="metric" style="background:${bg}"><div class="metric-accent" style="background:${accent}"></div><div class="metric-label">${check}${c.nome}</div><div class="metric-value" style="${isPago?'color:#2E7D32':''}">${fmt(val)}</div><div class="metric-sub">dia ${c.dia} • ${fmt(c.limite)}<br><span style="color:${corDisponivel};font-weight:600">Disponível: ${fmt(limiteDisponivelCartao)}</span></div></div>`;
+  }).join('');
+  
+  // Tabela detalhada
+  let html='<thead><tr><th>Cartão</th>';
+  meses.forEach(m=>html+=`<th class="r">${m}</th>`);
+  html+='<th class="r">Total</th></tr></thead><tbody>';
+  
+  CARDS.forEach(c=>{
+    html+=`<tr><td><strong>${c.nome}</strong></td>`;
+    let tot=0;
+    meses.forEach(m=>{
+      const f=FATURAS.find(x=>x.card===c.id&&x.mes===m);
+      const v=f?f.val:0;
+      tot+=v;
+      const isPago=m==='Abr/26'&&PAGAMENTOS.cartoes.includes(c.id);
+      html+=`<td class="r" style="${isPago?'text-decoration:line-through;opacity:0.5':''}">${v?fmt(v):'—'}</td>`;
+    });
+    html+=`<td class="r" style="font-weight:700">${fmt(tot)}</td></tr>`;
+  });
+  
+  // Linha de total
+  html+='<tr class="subtotal"><td>TOTAL</td>';
+  let grandTotal=0;
+  meses.forEach(m=>{
+    const tot=CARDS.reduce((s,c)=>{
+      const f=FATURAS.find(x=>x.card===c.id&&x.mes===m);
+      return s+(f?f.val:0);
+    },0);
+    grandTotal+=tot;
+    html+=`<td class="r">${fmt(tot)}</td>`;
+  });
+  html+=`<td class="r" style="color:#C62828">${fmt(grandTotal)}</td></tr>`;
+  html+='</tbody>';
+  
+  document.getElementById('cardsTable').innerHTML=html;
+}
+</script>
+
+<!-- Service Worker Registration -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('Service Worker registrado'))
+      .catch(err => console.log('Erro ao registrar Service Worker:', err));
+  });
+}
+</script>
+
+</body>
+</html>
