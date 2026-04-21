@@ -94,6 +94,7 @@ td{padding:10px;border-bottom:1px solid #f0f0ee}
 .form-label{display:block;font-size:13px;font-weight:600;color:#666;margin-bottom:6px}
 .form-input,.form-select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;background:#fff;transition:border-color 0.2s}
 .form-input:focus,.form-select:focus{outline:none;border-color:#0a4a8a}
+textarea.form-input{font-family:inherit;min-height:60px}
 .form-radio-group{display:flex;gap:1rem;flex-wrap:wrap}
 .form-radio{display:flex;align-items:center;gap:6px;cursor:pointer}
 .form-radio input{cursor:pointer}
@@ -2502,18 +2503,35 @@ if ('serviceWorker' in navigator) {
             <label class="form-label">Cartão</label>
             <select class="form-select" id="cartaoTipo">
               <option value="">Selecione...</option>
-              <option value="neon">Neon (W)</option>
-              <option value="mercadopago">MercadoPago (W)</option>
-              <option value="amazon">Amazon (W)</option>
-              <option value="azul_inf_b">Azul Infinite (B)</option>
-              <option value="inter_b">Inter (B)</option>
-              <option value="renner_b">Renner (B)</option>
-              <option value="brb_master_w">BRB Master (W)</option>
-              <option value="credicard">Credicard (W)</option>
-              <option value="latam">Latam (W)</option>
-              <option value="porto_visa_w">Porto Visa (W)</option>
-              <option value="nubank">Nubank (W)</option>
-              <option value="porto_visa_b">Porto Visa (B)</option>
+              <option value="dm">DM (W) - dia 3</option>
+              <option value="neon">Neon (W) - dia 5</option>
+              <option value="mercadopago">MercadoPago (W) - dia 7</option>
+              <option value="amazon">Amazon (W) - dia 7</option>
+              <option value="brb_master_b">BRB Master (B) - dia 8</option>
+              <option value="itau_multi">Itau Multi (W) - dia 10</option>
+              <option value="pagseguro_b">PagSeguro (B) - dia 10</option>
+              <option value="azul_inf_b">Azul Infinite (B) - dia 13</option>
+              <option value="latam">Latam Black (B) - dia 14</option>
+              <option value="credicard">Carrefour (W) - dia 15</option>
+              <option value="brb_master_w">BRB Master (W) - dia 15</option>
+              <option value="renner_b">Renner (B) - dia 15</option>
+              <option value="inter_b">Inter (B) - dia 15</option>
+              <option value="porto_visa_w">Porto Visa (W) - dia 15</option>
+              <option value="porto_visa_b">Porto Visa (B) - dia 16</option>
+              <option value="porto_master">Porto Master (W) - dia 17</option>
+              <option value="sams">Sams (W) - dia 17</option>
+              <option value="nubank">Nubank (W) - dia 18</option>
+              <option value="inter_w">Inter (W) - dia 18</option>
+              <option value="brb_inf_w">BRB Infinite (W) - dia 20</option>
+              <option value="renner_w">Renner (W) - dia 20</option>
+              <option value="trigg">Trigg (W) - dia 20</option>
+              <option value="santander_w">Santander (W) - dia 20</option>
+              <option value="azul_skyline">Azul Skyline (W) - dia 21</option>
+              <option value="itau_emp">Itau Empresa - dia 23</option>
+              <option value="pagseguro">PagSeguro (W) - dia 25</option>
+              <option value="brb_master2">BRB Master 2 (W) - dia 25</option>
+              <option value="itau_black">Itau Uniclass Black (W) - dia 28</option>
+              <option value="santander_b">Santander (B) - dia 30</option>
               <option value="novo">➕ Adicionar novo cartão...</option>
             </select>
           </div>
@@ -2550,14 +2568,65 @@ if ('serviceWorker' in navigator) {
         </div>
       </div>
 
+      <!-- Calculadora de Parcelas (Apenas para Expenses) -->
+      <div id="parcelasSection" class="hidden">
+        <div class="form-group" style="background:#f5f5f3;padding:1rem;border-radius:8px;border:1px solid #e8e8e6">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <input type="checkbox" id="parcelarCheck" style="cursor:pointer">
+            <label for="parcelarCheck" style="cursor:pointer;font-weight:600;color:#666;font-size:13px">💳 Parcelar este gasto</label>
+          </div>
+          <div id="parcelasFields" class="hidden">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div>
+                <label class="form-label">Valor Total</label>
+                <input type="number" class="form-input" id="parcelasTotal" placeholder="0.00" step="0.01" readonly style="background:#f9f9f8">
+              </div>
+              <div>
+                <label class="form-label">Quantidade</label>
+                <input type="number" class="form-input" id="parcelasQtd" placeholder="Ex: 3" min="2" max="12">
+              </div>
+            </div>
+            <div style="margin-top:8px;padding:8px;background:#e3f2fd;border-radius:6px;font-size:12px;color:#1565c0">
+              <strong>Cada parcela:</strong> <span id="parcelaValor">R$ 0,00</span>
+            </div>
+            <div id="parcelasLegenda" style="margin-top:8px;padding:8px;background:#fff3e0;border-radius:6px;font-size:11px;color:#e65100"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Observações -->
+      <div class="form-group">
+        <label class="form-label">📝 Observações (opcional)</label>
+        <textarea class="form-input" id="observacoes" placeholder="Ex: Pagamento atrasado, nova assinatura, etc" rows="2" style="resize:vertical"></textarea>
+      </div>
+
       <!-- Preview -->
       <div class="update-preview">
-        <div class="update-preview-title">📋 Código do Update:</div>
-        <div class="update-code" id="updatePreview">{tipo:'exemplo',valor:0}</div>
+        <div class="update-preview-title">📋 Prompt do Update:</div>
+        <div class="update-code" id="updatePreview">Preencha os campos acima...</div>
       </div>
 
       <!-- Botões -->
-      <button type="button" class="btn-secondary" id="copyBtn">Copiar e Enviar para mim</button>
+      <div style="display:flex;gap:8px">
+        <button type="button" class="btn-secondary" style="width:auto;flex:1" id="clearBtn">🗑️ Limpar</button>
+        <button type="button" class="btn-secondary" style="width:auto;flex:1" id="saveRascunhoBtn">💾 Salvar</button>
+        <button type="button" class="btn-primary" style="flex:2" id="copyBtn">📋 Copiar e Enviar</button>
+      </div>
+      
+      <div style="margin-top:8px">
+        <button type="button" class="btn-primary" style="background:#2e7d32;width:100%" id="githubCommitBtn">
+          🚀 Aplicar Update Automaticamente (GitHub)
+        </button>
+      </div>
+      
+      <!-- Favoritos -->
+      <div class="form-group" style="margin-top:1rem">
+        <details style="cursor:pointer">
+          <summary style="font-weight:600;color:#666;font-size:13px;padding:8px 0">⭐ Favoritos (clique para expandir)</summary>
+          <div id="favoritosList" style="margin-top:8px;display:grid;gap:4px"></div>
+          <button type="button" class="btn-secondary" id="addFavoritoBtn" style="margin-top:8px;font-size:12px;padding:8px">➕ Adicionar aos Favoritos</button>
+        </details>
+      </div>
     </form>
   </div>
 </div>
@@ -2613,7 +2682,19 @@ document.querySelectorAll('input[name="mesReferencia"]').forEach(radio => {
       mesEspecificoField.classList.remove('hidden');
     }
     updatePreviewCode();
+    
+    // Atualizar legenda de parcelas se estiver ativo
+    if(document.getElementById('parcelarCheck').checked) {
+      calcularParcelas();
+    }
   });
+});
+
+// Atualizar legenda quando mudar o mês específico
+document.getElementById('mesEspecifico').addEventListener('change', () => {
+  if(document.getElementById('parcelarCheck').checked) {
+    calcularParcelas();
+  }
 });
 
 // ===== ALTERNAR CATEGORIAS DE EXPENSE =====
@@ -2805,16 +2886,10 @@ function updatePreviewCode() {
   const mesesNomes = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
   const mesNome = mesesNomes[parseInt(mesEspecifico)];
   
-  let codigo = '';
-  let prefixo = '';
-  
-  if (mesReferencia === 'recorrente') {
-    prefixo = '🔁 RECORRENTE (todos os meses)\n\n';
-  } else {
-    prefixo = `📅 ${mesNome} 2026\n\n`;
-  }
+  let prompt = '';
   
   if (updateType === 'income') {
+    // ===== INCOME =====
     const incomeList = document.getElementById('incomeList').value;
     let tipo = incomeList;
     
@@ -2827,13 +2902,37 @@ function updatePreviewCode() {
     
     const valor = parseFloat(document.getElementById('incomeValor').value) || 0;
     const dia = document.getElementById('incomeDia').value || '01';
+    const obs = document.getElementById('observacoes').value;
     
-    codigo = `{tipo:'${tipo}',data:'${dia}/${mesEspecifico.padStart(2, '0')}',valor:${valor}}`;
+    if (mesReferencia === 'recorrente') {
+      prompt = `🔄 NOVO UPDATE - INCOME RECORRENTE
+
+📊 Detalhes:
+• Tipo: ${tipo}
+• Valor: R$ ${valor.toFixed(2).replace('.', ',')}
+• Dia: ${dia}
+• Aplicar: TODOS os meses de 2026 e 2027${obs ? '\n• Observações: ' + obs : ''}
+
+✅ Ação: Adicione este recebimento no objeto UPDATES em TODOS os meses.`;
+      
+    } else {
+      prompt = `🔄 NOVO UPDATE - INCOME
+
+📊 Detalhes:
+• Mês: ${mesNome} 2026
+• Tipo: ${tipo}
+• Valor: R$ ${valor.toFixed(2).replace('.', ',')}
+• Data: ${dia}/${mesEspecifico.padStart(2, '0')}${obs ? '\n• Observações: ' + obs : ''}
+
+✅ Ação: Adicione este recebimento no objeto UPDATES[2026][${mesNome.toLowerCase()}].recebimentos`;
+    }
     
   } else {
+    // ===== EXPENSE =====
     const categoria = document.getElementById('expenseCategoria').value;
     let tipo = '';
     let valor = parseFloat(document.getElementById('expenseValor').value) || 0;
+    const obs = document.getElementById('observacoes').value;
     
     if (categoria === 'casa') {
       const casaTipo = document.getElementById('casaTipo').value;
@@ -2883,24 +2982,649 @@ function updatePreviewCode() {
     
     if (!tipo) tipo = 'selecione_categoria';
     
-    if (categoria === 'cartoes' || categoria === 'emprestimos') {
-      codigo = `'${tipo}'`;
+    // VERIFICAR SE ESTÁ PARCELADO
+    const parcelarAtivo = document.getElementById('parcelarCheck').checked;
+    
+    if(parcelarAtivo) {
+      const qtdParcelas = parseInt(document.getElementById('parcelasQtd').value) || 1;
+      const mesInicio = parseInt(mesEspecifico);
+      
+      let mesesParcelas = [];
+      for(let i = 0; i < qtdParcelas; i++) {
+        let mesAtual = mesInicio + i;
+        let anoAtual = 2026;
+        
+        while(mesAtual > 12) {
+          mesAtual -= 12;
+          anoAtual += 1;
+        }
+        
+        mesesParcelas.push(`${mesesNomes[mesAtual]}/${anoAtual}`);
+      }
+      
+      if (categoria === 'cartoes') {
+        prompt = `🔄 NOVO UPDATE - CARTÃO PARCELADO
+
+📊 Detalhes:
+• Cartão: ${tipo}
+• Parcelas: ${qtdParcelas}x
+• Meses: ${mesesParcelas.join(', ')}${obs ? '\n• Observações: ' + obs : ''}
+
+✅ Ação: Marque este cartão como PAGO em UPDATES nos ${qtdParcelas} meses indicados.`;
+        
+      } else if (categoria === 'emprestimos') {
+        prompt = `🔄 NOVO UPDATE - EMPRÉSTIMO PARCELADO
+
+📊 Detalhes:
+• Empréstimo: ${tipo}
+• Parcelas: ${qtdParcelas}x
+• Meses: ${mesesParcelas.join(', ')}${obs ? '\n• Observações: ' + obs : ''}
+
+✅ Ação: Marque este empréstimo como PAGO em UPDATES nos ${qtdParcelas} meses indicados.`;
+        
+      } else {
+        prompt = `🔄 NOVO UPDATE - EXPENSE PARCELADO
+
+📊 Detalhes:
+• Categoria: ${categoria.charAt(0).toUpperCase() + categoria.slice(1)}
+• Tipo: ${tipo}
+• Parcelas: ${qtdParcelas}x de R$ ${valor.toFixed(2).replace('.', ',')}
+• Total: R$ ${(valor * qtdParcelas).toFixed(2).replace('.', ',')}
+• Meses: ${mesesParcelas.join(', ')}${obs ? '\n• Observações: ' + obs : ''}
+
+✅ Ação: Adicione este gasto PARCELADO em UPDATES.gastos_pagos nos ${qtdParcelas} meses indicados.`;
+      }
+      
     } else {
-      codigo = `{tipo:'${tipo}',valor:${valor}}`;
+      // Código normal (sem parcelas)
+      if (categoria === 'cartoes') {
+        prompt = `🔄 NOVO UPDATE - CARTÃO PAGO
+
+📊 Detalhes:
+• Cartão: ${tipo}
+• Mês: ${mesNome} 2026${obs ? '\n• Observações: ' + obs : ''}
+
+✅ Ação: Adicione '${tipo}' em UPDATES[2026][${mesNome.toLowerCase()}].cartoes_pagos`;
+        
+      } else if (categoria === 'emprestimos') {
+        prompt = `🔄 NOVO UPDATE - EMPRÉSTIMO PAGO
+
+📊 Detalhes:
+• Empréstimo: ${tipo}
+• Mês: ${mesNome} 2026${obs ? '\n• Observações: ' + obs : ''}
+
+✅ Ação: Adicione '${tipo}' em UPDATES[2026][${mesNome.toLowerCase()}].emprestimos_pagos`;
+        
+      } else {
+        prompt = `🔄 NOVO UPDATE - EXPENSE
+
+📊 Detalhes:
+• Categoria: ${categoria.charAt(0).toUpperCase() + categoria.slice(1)}
+• Mês: ${mesNome} 2026
+• Tipo: ${tipo}
+• Valor: R$ ${valor.toFixed(2).replace('.', ',')}${obs ? '\n• Observações: ' + obs : ''}
+
+✅ Ação: Adicione {tipo:'${tipo}',valor:${valor}} em UPDATES[2026][${mesNome.toLowerCase()}].gastos_pagos`;
+      }
     }
   }
   
-  updatePreview.textContent = prefixo + codigo;
+  updatePreview.textContent = prompt;
 }
 
 // ===== COPIAR CÓDIGO =====
 copyBtn.addEventListener('click', () => {
   const code = updatePreview.textContent;
-  navigator.clipboard.writeText(code).then(() => {
+  const obs = document.getElementById('observacoes').value;
+  
+  let finalCode = code;
+  if(obs) {
+    finalCode += '\n\n📝 Obs: ' + obs;
+  }
+  
+  navigator.clipboard.writeText(finalCode).then(() => {
+    // Salvar no histórico
+    saveToHistory(finalCode);
+    
     alert('✅ Código copiado!\n\nAgora cole no chat comigo e eu atualizo automaticamente o painel!');
     modal.classList.remove('active');
+    
+    // Limpar rascunho
+    localStorage.removeItem('updateRascunho');
   });
 });
+
+// ===== CALCULADORA DE PARCELAS =====
+document.getElementById('parcelarCheck').addEventListener('change', (e) => {
+  const parcelasFields = document.getElementById('parcelasFields');
+  if(e.target.checked) {
+    parcelasFields.classList.remove('hidden');
+    // Auto-preencher valor total com o valor do expense
+    const valorExpense = document.getElementById('expenseValor').value;
+    if(valorExpense) {
+      document.getElementById('parcelasTotal').value = valorExpense;
+      calcularParcelas();
+    }
+  } else {
+    parcelasFields.classList.add('hidden');
+  }
+  updatePreviewCode();
+});
+
+// Auto-preencher valor total quando mudar valor do expense
+document.getElementById('expenseValor').addEventListener('input', () => {
+  const parcelarAtivo = document.getElementById('parcelarCheck').checked;
+  if(parcelarAtivo) {
+    const valorExpense = document.getElementById('expenseValor').value;
+    document.getElementById('parcelasTotal').value = valorExpense;
+    calcularParcelas();
+  }
+});
+
+document.getElementById('parcelasQtd').addEventListener('input', () => {
+  calcularParcelas();
+  updatePreviewCode();
+});
+
+function calcularParcelas() {
+  const total = parseFloat(document.getElementById('parcelasTotal').value) || 0;
+  const qtd = parseInt(document.getElementById('parcelasQtd').value) || 1;
+  const valorParcela = total / qtd;
+  
+  document.getElementById('parcelaValor').textContent = `R$ ${valorParcela.toFixed(2).replace('.', ',')}`;
+  
+  // Gerar legenda com os meses
+  const mesEspecifico = parseInt(document.getElementById('mesEspecifico').value);
+  const mesesNomes = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+  
+  let legendaMeses = [];
+  for(let i = 0; i < qtd; i++) {
+    let mesAtual = mesEspecifico + i;
+    let anoAtual = 2026;
+    
+    while(mesAtual > 12) {
+      mesAtual -= 12;
+      anoAtual += 1;
+    }
+    
+    legendaMeses.push(`${i+1}ª: ${mesesNomes[mesAtual]}/${anoAtual.toString().substr(2)}`);
+  }
+  
+  document.getElementById('parcelasLegenda').innerHTML = `<strong>Parcelas:</strong> ${legendaMeses.join(' • ')}`;
+}
+
+// Mostrar seção de parcelas apenas para expenses
+document.querySelectorAll('input[name="updateType"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    const parcelasSection = document.getElementById('parcelasSection');
+    if(e.target.value === 'expense') {
+      parcelasSection.classList.remove('hidden');
+    } else {
+      parcelasSection.classList.add('hidden');
+    }
+  });
+});
+
+// ===== LIMPAR FORMULÁRIO =====
+document.getElementById('clearBtn').addEventListener('click', () => {
+  if(confirm('🗑️ Limpar todos os campos?')) {
+    document.querySelectorAll('.form-input, .form-select').forEach(el => {
+      if(el.type === 'checkbox') {
+        el.checked = false;
+      } else {
+        el.value = '';
+      }
+    });
+    document.getElementById('typeIncome').checked = true;
+    document.getElementById('freqPontual').checked = true;
+    document.getElementById('incomeFields').classList.remove('hidden');
+    document.getElementById('expenseFields').classList.add('hidden');
+    document.getElementById('parcelasFields').classList.add('hidden');
+    updatePreviewCode();
+  }
+});
+
+// ===== SALVAR E CARREGAR RASCUNHO =====
+document.getElementById('saveRascunhoBtn').addEventListener('click', () => {
+  const rascunho = {
+    updateType: document.querySelector('input[name="updateType"]:checked').value,
+    mesReferencia: document.querySelector('input[name="mesReferencia"]:checked').value,
+    mesEspecifico: document.getElementById('mesEspecifico').value,
+    incomeList: document.getElementById('incomeList').value,
+    incomeValor: document.getElementById('incomeValor').value,
+    incomeDia: document.getElementById('incomeDia').value,
+    expenseCategoria: document.getElementById('expenseCategoria').value,
+    expenseValor: document.getElementById('expenseValor').value,
+    observacoes: document.getElementById('observacoes').value
+  };
+  
+  localStorage.setItem('updateRascunho', JSON.stringify(rascunho));
+  alert('💾 Rascunho salvo!');
+});
+
+function carregarRascunho() {
+  const rascunho = localStorage.getItem('updateRascunho');
+  if(rascunho) {
+    try {
+      const data = JSON.parse(rascunho);
+      
+      if(confirm('💾 Encontrei um rascunho salvo. Deseja carregar?')) {
+        document.querySelector(`input[name="updateType"][value="${data.updateType}"]`).checked = true;
+        document.querySelector(`input[name="mesReferencia"][value="${data.mesReferencia}"]`).checked = true;
+        document.getElementById('mesEspecifico').value = data.mesEspecifico;
+        document.getElementById('incomeList').value = data.incomeList;
+        document.getElementById('incomeValor').value = data.incomeValor;
+        document.getElementById('incomeDia').value = data.incomeDia;
+        document.getElementById('expenseCategoria').value = data.expenseCategoria;
+        document.getElementById('expenseValor').value = data.expenseValor;
+        document.getElementById('observacoes').value = data.observacoes;
+        
+        // Trigger changes
+        document.querySelector('input[name="updateType"]:checked').dispatchEvent(new Event('change'));
+        updatePreviewCode();
+      }
+    } catch(e) {
+      console.error('Erro ao carregar rascunho:', e);
+    }
+  }
+}
+
+// Carregar rascunho ao abrir modal
+fabBtn.addEventListener('click', carregarRascunho);
+
+// ===== FAVORITOS =====
+function carregarFavoritos() {
+  const favoritos = JSON.parse(localStorage.getItem('updateFavoritos') || '[]');
+  const lista = document.getElementById('favoritosList');
+  
+  if(favoritos.length === 0) {
+    lista.innerHTML = '<div style="font-size:12px;color:#888;padding:8px">Nenhum favorito salvo</div>';
+    return;
+  }
+  
+  lista.innerHTML = favoritos.map((fav, idx) => `
+    <div style="display:flex;align-items:center;gap:8px;padding:8px;background:#f9f9f8;border-radius:6px;font-size:12px">
+      <button onclick="carregarFavorito(${idx})" style="flex:1;text-align:left;background:none;border:none;cursor:pointer;padding:4px;font-size:12px">
+        ${fav.nome}
+      </button>
+      <button onclick="removerFavorito(${idx})" style="background:#ffebee;border:none;color:#c62828;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:11px">🗑️</button>
+    </div>
+  `).join('');
+}
+
+document.getElementById('addFavoritoBtn').addEventListener('click', () => {
+  const nome = prompt('Nome do favorito:');
+  if(!nome) return;
+  
+  const favorito = {
+    nome: nome,
+    updateType: document.querySelector('input[name="updateType"]:checked').value,
+    incomeList: document.getElementById('incomeList').value,
+    incomeValor: document.getElementById('incomeValor').value,
+    expenseCategoria: document.getElementById('expenseCategoria').value,
+    expenseValor: document.getElementById('expenseValor').value
+  };
+  
+  const favoritos = JSON.parse(localStorage.getItem('updateFavoritos') || '[]');
+  favoritos.push(favorito);
+  localStorage.setItem('updateFavoritos', JSON.stringify(favoritos));
+  
+  carregarFavoritos();
+  alert('⭐ Favorito adicionado!');
+});
+
+window.carregarFavorito = function(idx) {
+  const favoritos = JSON.parse(localStorage.getItem('updateFavoritos') || '[]');
+  const fav = favoritos[idx];
+  
+  document.querySelector(`input[name="updateType"][value="${fav.updateType}"]`).checked = true;
+  document.getElementById('incomeList').value = fav.incomeList;
+  document.getElementById('incomeValor').value = fav.incomeValor;
+  document.getElementById('expenseCategoria').value = fav.expenseCategoria;
+  document.getElementById('expenseValor').value = fav.expenseValor;
+  
+  document.querySelector('input[name="updateType"]:checked').dispatchEvent(new Event('change'));
+  updatePreviewCode();
+};
+
+window.removerFavorito = function(idx) {
+  if(!confirm('Remover este favorito?')) return;
+  
+  const favoritos = JSON.parse(localStorage.getItem('updateFavoritos') || '[]');
+  favoritos.splice(idx, 1);
+  localStorage.setItem('updateFavoritos', JSON.stringify(favoritos));
+  carregarFavoritos();
+};
+
+// ===== HISTÓRICO =====
+function saveToHistory(code) {
+  const historico = JSON.parse(localStorage.getItem('updateHistorico') || '[]');
+  historico.unshift({
+    code: code,
+    timestamp: new Date().toISOString(),
+    date: new Date().toLocaleString('pt-BR')
+  });
+  
+  // Manter apenas últimos 50
+  if(historico.length > 50) {
+    historico.pop();
+  }
+  
+  localStorage.setItem('updateHistorico', JSON.stringify(historico));
+}
+
+// Inicializar favoritos
+carregarFavoritos();
+
+// ===== COMMIT AUTOMÁTICO NO GITHUB =====
+document.getElementById('githubCommitBtn').addEventListener('click', async () => {
+  // Verificar se tem token salvo
+  let GITHUB_TOKEN = localStorage.getItem('github_token');
+  
+  if(!GITHUB_TOKEN) {
+    const tokenInput = prompt('🔐 GitHub Personal Access Token:\n\nPara usar o commit automático, você precisa de um token.\n\nCole seu token aqui (será salvo apenas no seu navegador):');
+    
+    if(!tokenInput) {
+      alert('❌ Token necessário para commit automático.\n\nUse o botão "Copiar e Enviar" se preferir o método manual.');
+      return;
+    }
+    
+    GITHUB_TOKEN = tokenInput.trim();
+    localStorage.setItem('github_token', GITHUB_TOKEN);
+    alert('✅ Token salvo com sucesso!\n\nAgora você pode usar o commit automático sempre que quiser.');
+  }
+  
+  if(!confirm('🚀 Aplicar este update automaticamente?\n\nIsso vai:\n1. Atualizar o código\n2. Fazer commit no GitHub\n3. Publicar no site\n\nContinuar?')) {
+    return;
+  }
+  
+  const btn = document.getElementById('githubCommitBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Processando...';
+  
+  try {
+    // Gerar o update
+    const updateData = gerarUpdateData();
+    
+    if(!updateData) {
+      alert('❌ Preencha todos os campos obrigatórios!');
+      btn.disabled = false;
+      btn.textContent = '🚀 Aplicar Update Automaticamente (GitHub)';
+      return;
+    }
+    
+    // Buscar arquivo atual do GitHub
+    btn.textContent = '⏳ Buscando arquivo do GitHub...';
+    
+    const REPO_OWNER = 'wallaceneander';
+    const REPO_NAME = 'painel-financeiro';
+    const FILE_PATH = 'index.html';
+    
+    const getFileResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+      headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    
+    if(!getFileResponse.ok) {
+      if(getFileResponse.status === 401) {
+        localStorage.removeItem('github_token');
+        throw new Error('Token inválido ou expirado. Clique novamente para inserir um novo token.');
+      }
+      throw new Error('Erro ao buscar arquivo do GitHub');
+    }
+    
+    const fileData = await getFileResponse.json();
+    const currentContent = atob(fileData.content);
+    
+    // Aplicar o update no conteúdo
+    btn.textContent = '⏳ Aplicando update...';
+    const updatedContent = aplicarUpdate(currentContent, updateData);
+    
+    // Fazer commit
+    btn.textContent = '⏳ Fazendo commit no GitHub...';
+    
+    const commitResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `Update: ${updateData.descricao}`,
+        content: btoa(unescape(encodeURIComponent(updatedContent))),
+        sha: fileData.sha
+      })
+    });
+    
+    if(!commitResponse.ok) {
+      if(commitResponse.status === 401) {
+        localStorage.removeItem('github_token');
+        throw new Error('Token inválido. Clique novamente para inserir um novo token.');
+      }
+      throw new Error('Erro ao fazer commit');
+    }
+    
+    // Sucesso!
+    btn.textContent = '✅ Update Aplicado!';
+    btn.style.background = '#2e7d32';
+    
+    alert('✅ UPDATE APLICADO COM SUCESSO!\n\n' +
+          '🔄 O GitHub Pages vai atualizar em 1-2 minutos.\n' +
+          '🌐 Recarregue a página depois para ver as mudanças!\n\n' +
+          'Update: ' + updateData.descricao);
+    
+    // Limpar formulário
+    document.getElementById('clearBtn').click();
+    modal.classList.remove('active');
+    
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = '🚀 Aplicar Update Automaticamente (GitHub)';
+      btn.style.background = '#2e7d32';
+    }, 3000);
+    
+  } catch(error) {
+    console.error('Erro:', error);
+    alert('❌ ERRO ao aplicar update:\n\n' + error.message + '\n\nTente novamente ou use o método manual (Copiar e Enviar).');
+    btn.disabled = false;
+    btn.textContent = '🚀 Aplicar Update Automaticamente (GitHub)';
+  }
+});
+
+// Botão para limpar token (opcional - adicionar se necessário)
+window.limparTokenGithub = function() {
+  if(confirm('🗑️ Remover token do GitHub salvo?\n\nVocê precisará inserir novamente na próxima vez.')) {
+    localStorage.removeItem('github_token');
+    alert('✅ Token removido!');
+  }
+};
+
+function gerarUpdateData() {
+  const updateType = document.querySelector('input[name="updateType"]:checked').value;
+  const mesReferencia = document.querySelector('input[name="mesReferencia"]:checked').value;
+  const mesEspecifico = parseInt(document.getElementById('mesEspecifico').value);
+  
+  const mesesNomes = ['', 'janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+  const mesKey = mesesNomes[mesEspecifico];
+  
+  if(updateType === 'income') {
+    const incomeList = document.getElementById('incomeList').value;
+    let tipo = incomeList;
+    
+    if (incomeList === 'novo') {
+      tipo = document.getElementById('incomeNome').value.toLowerCase().replace(/\s+/g, '_');
+    }
+    
+    if(!tipo || tipo === '') return null;
+    
+    const valor = parseFloat(document.getElementById('incomeValor').value);
+    const dia = document.getElementById('incomeDia').value;
+    
+    if(!valor || !dia) return null;
+    
+    return {
+      tipo: 'income',
+      mesKey: mesKey,
+      ano: 2026,
+      dados: {
+        tipo: tipo,
+        data: `${dia}/${mesEspecifico.toString().padStart(2, '0')}`,
+        valor: valor
+      },
+      descricao: `Income ${tipo} - R$ ${valor.toFixed(2)} em ${mesKey}`
+    };
+    
+  } else {
+    const categoria = document.getElementById('expenseCategoria').value;
+    if(!categoria) return null;
+    
+    let tipo = '';
+    
+    if (categoria === 'casa') {
+      const casaTipo = document.getElementById('casaTipo').value;
+      tipo = casaTipo === 'novo' ? document.getElementById('casaNovo').value.toLowerCase().replace(/\s+/g, '_') : casaTipo;
+    } else if (categoria === 'estudos') {
+      const estudosTipo = document.getElementById('estudosTipo').value;
+      tipo = estudosTipo === 'novo' ? document.getElementById('estudosNovo').value.toLowerCase().replace(/\s+/g, '_') : estudosTipo;
+    } else if (categoria === 'saude') {
+      const saudeTipo = document.getElementById('saudeTipo').value;
+      tipo = saudeTipo === 'novo' ? document.getElementById('saudeNovo').value.toLowerCase().replace(/\s+/g, '_') : saudeTipo;
+    } else if (categoria === 'fiscal') {
+      const fiscalTipo = document.getElementById('fiscalTipo').value;
+      tipo = fiscalTipo === 'novo' ? document.getElementById('fiscalNovo').value.toLowerCase().replace(/\s+/g, '_') : fiscalTipo;
+    } else if (categoria === 'outros') {
+      tipo = document.getElementById('outrosNome').value.toLowerCase().replace(/\s+/g, '_');
+    } else if (categoria === 'cartoes') {
+      const cartaoTipo = document.getElementById('cartaoTipo').value;
+      tipo = cartaoTipo === 'novo' ? document.getElementById('cartaoNovo').value.toLowerCase().replace(/\s+/g, '_') : cartaoTipo;
+    } else if (categoria === 'emprestimos') {
+      const emprestimoTipo = document.getElementById('emprestimoTipo').value;
+      tipo = emprestimoTipo === 'novo' ? document.getElementById('emprestimoNovo').value.toLowerCase().replace(/\s+/g, '_') : emprestimoTipo;
+    }
+    
+    if(!tipo) return null;
+    
+    const parcelarAtivo = document.getElementById('parcelarCheck').checked;
+    
+    if(parcelarAtivo) {
+      const qtd = parseInt(document.getElementById('parcelasQtd').value);
+      const valor = parseFloat(document.getElementById('expenseValor').value);
+      
+      if(!qtd || !valor) return null;
+      
+      // Gerar array de meses
+      let meses = [];
+      for(let i = 0; i < qtd; i++) {
+        let m = mesEspecifico + i;
+        let ano = 2026;
+        while(m > 12) {
+          m -= 12;
+          ano++;
+        }
+        meses.push({mes: mesesNomes[m], ano: ano});
+      }
+      
+      return {
+        tipo: 'expense_parcelado',
+        categoria: categoria,
+        meses: meses,
+        dados: categoria === 'cartoes' || categoria === 'emprestimos' ? tipo : {tipo: tipo, valor: valor},
+        descricao: `${categoria} ${tipo} parcelado ${qtd}x`
+      };
+      
+    } else {
+      const valor = parseFloat(document.getElementById('expenseValor').value);
+      
+      if(categoria === 'cartoes' || categoria === 'emprestimos') {
+        return {
+          tipo: categoria === 'cartoes' ? 'cartao' : 'emprestimo',
+          mesKey: mesKey,
+          ano: 2026,
+          dados: tipo,
+          descricao: `${categoria} ${tipo} pago em ${mesKey}`
+        };
+      } else {
+        if(!valor) return null;
+        
+        return {
+          tipo: 'expense',
+          mesKey: mesKey,
+          ano: 2026,
+          dados: {tipo: tipo, valor: valor},
+          descricao: `Gasto ${tipo} - R$ ${valor.toFixed(2)} em ${mesKey}`
+        };
+      }
+    }
+  }
+}
+
+function aplicarUpdate(conteudo, updateData) {
+  // Encontrar a linha do objeto UPDATES
+  const updatesRegex = /const UPDATES=\{[\s\S]*?\n\};/;
+  const match = conteudo.match(updatesRegex);
+  
+  if(!match) {
+    throw new Error('Não foi possível encontrar o objeto UPDATES no código');
+  }
+  
+  let updatesObj = match[0];
+  
+  // Aplicar update baseado no tipo
+  if(updateData.tipo === 'income') {
+    const recebimentosRegex = new RegExp(`(${updateData.ano}:\\{[\\s\\S]*?${updateData.mesKey}:\\{[\\s\\S]*?recebimentos:\\[)([\\s\\S]*?)(\\])`, 'g');
+    
+    const novoRecebimento = `\n      {tipo:'${updateData.dados.tipo}',data:'${updateData.dados.data}',valor:${updateData.dados.valor}}`;
+    
+    updatesObj = updatesObj.replace(recebimentosRegex, (match, p1, p2, p3) => {
+      if(p2.trim() === '') {
+        return p1 + novoRecebimento + '\n    ' + p3;
+      } else {
+        return p1 + p2 + ',' + novoRecebimento + '\n    ' + p3;
+      }
+    });
+    
+  } else if(updateData.tipo === 'cartao') {
+    const cartoesRegex = new RegExp(`(${updateData.ano}:\\{[\\s\\S]*?${updateData.mesKey}:\\{[\\s\\S]*?cartoes_pagos:\\[)([\\s\\S]*?)(\\])`, 'g');
+    
+    updatesObj = updatesObj.replace(cartoesRegex, (match, p1, p2, p3) => {
+      if(p2.trim() === '') {
+        return p1 + `'${updateData.dados}'` + p3;
+      } else {
+        return p1 + p2 + `,'${updateData.dados}'` + p3;
+      }
+    });
+    
+  } else if(updateData.tipo === 'emprestimo') {
+    const empRegex = new RegExp(`(${updateData.ano}:\\{[\\s\\S]*?${updateData.mesKey}:\\{[\\s\\S]*?emprestimos_pagos:\\[)([\\s\\S]*?)(\\])`, 'g');
+    
+    updatesObj = updatesObj.replace(empRegex, (match, p1, p2, p3) => {
+      if(p2.trim() === '') {
+        return p1 + `'${updateData.dados}'` + p3;
+      } else {
+        return p1 + p2 + `,'${updateData.dados}'` + p3;
+      }
+    });
+    
+  } else if(updateData.tipo === 'expense') {
+    const gastosRegex = new RegExp(`(${updateData.ano}:\\{[\\s\\S]*?${updateData.mesKey}:\\{[\\s\\S]*?gastos_pagos:\\[)([\\s\\S]*?)(\\])`, 'g');
+    
+    const novoGasto = `\n      {tipo:'${updateData.dados.tipo}',valor:${updateData.dados.valor}}`;
+    
+    updatesObj = updatesObj.replace(gastosRegex, (match, p1, p2, p3) => {
+      if(p2.trim() === '') {
+        return p1 + novoGasto + '\n    ' + p3;
+      } else {
+        return p1 + p2 + ',' + novoGasto + '\n    ' + p3;
+      }
+    });
+  }
+  
+  // Substituir no conteúdo original
+  return conteudo.replace(updatesRegex, updatesObj);
+}
 
 updatePreviewCode();
 </script>
