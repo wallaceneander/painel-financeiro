@@ -68,12 +68,50 @@ td{padding:10px;border-bottom:1px solid #f0f0ee}
 .pos{color:#2E7D32}
 .neg{color:#C62828}
 .subtotal{background:#f9f9f8;font-weight:700}
+
+/* Filtros Melhorados */
+.filtros-container{display:flex;gap:1rem;align-items:center;margin-bottom:1.5rem;padding:1rem;background:#f9f9f8;border-radius:8px;border:1px solid #e8e8e6}
+.filtro-group{display:flex;flex-direction:column;gap:4px}
+.filtro-label{font-size:11px;font-weight:600;color:#666;text-transform:uppercase}
+.filtro-select{padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;background:#fff;cursor:pointer;min-width:150px}
+.filtro-select:focus{outline:none;border-color:#0a4a8a}
+.filtro-info{margin-left:auto;padding:8px 16px;background:#0a4a8a;color:#fff;border-radius:6px;font-size:13px;font-weight:600}
+
+/* Botão Flutuante */
+.fab{position:fixed;bottom:24px;right:24px;width:64px;height:64px;background:#0a4a8a;border-radius:50%;border:none;box-shadow:0 4px 12px rgba(0,0,0,0.3);cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+.fab:hover{background:#083d75;transform:scale(1.1);box-shadow:0 6px 16px rgba(0,0,0,0.4)}
+.fab svg{width:32px;height:32px;fill:#fff}
+
+/* Modal */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1001;align-items:center;justify-content:center}
+.modal.active{display:flex}
+.modal-content{background:#fff;border-radius:12px;padding:2rem;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+.modal-title{font-size:20px;font-weight:700;color:#2d2d2d}
+.modal-close{background:none;border:none;font-size:28px;color:#888;cursor:pointer;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{color:#2d2d2d}
+.form-group{margin-bottom:1.2rem}
+.form-label{display:block;font-size:13px;font-weight:600;color:#666;margin-bottom:6px}
+.form-input,.form-select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;background:#fff;transition:border-color 0.2s}
+.form-input:focus,.form-select:focus{outline:none;border-color:#0a4a8a}
+.form-radio-group{display:flex;gap:1rem;flex-wrap:wrap}
+.form-radio{display:flex;align-items:center;gap:6px;cursor:pointer}
+.form-radio input{cursor:pointer}
+.form-radio label{cursor:pointer;font-size:14px;color:#2d2d2d}
+.btn-primary{background:#0a4a8a;color:#fff;border:none;padding:12px 24px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;width:100%;transition:background 0.2s}
+.btn-primary:hover{background:#083d75}
+.btn-secondary{background:#e8e8e6;color:#2d2d2d;border:none;padding:10px 20px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;width:100%;transition:background 0.2s}
+.btn-secondary:hover{background:#d8d8d6}
+.hidden{display:none!important}
+.update-preview{background:#f5f5f3;border:1px solid #e8e8e6;border-radius:8px;padding:1rem;margin-top:1rem}
+.update-preview-title{font-size:13px;font-weight:600;color:#666;margin-bottom:8px}
+.update-code{background:#2d2d2d;color:#4CAF50;padding:12px;border-radius:6px;font-family:monospace;font-size:12px;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>Painel Financeiro 2026</h1>
+  <h1>Painel Financeiro <span id="anoAtual">2026</span></h1>
   <div class="sub">Wallace & Bianca — 28 cartões + 7 empréstimos</div>
 </div>
 
@@ -108,19 +146,32 @@ td{padding:10px;border-bottom:1px solid #f0f0ee}
 </div>
 
 <div id="pane-geral" class="pane active">
-  <div class="mes-sel">
-    <label>Mês:</label>
-    <select id="mesSel" onchange="renderGeral()">
-      <option value="4" selected>Abril 2026</option>
-      <option value="5">Maio 2026</option>
-      <option value="6">Junho 2026</option>
-      <option value="7">Julho 2026</option>
-      <option value="8">Agosto 2026</option>
-      <option value="9">Setembro 2026</option>
-      <option value="10">Outubro 2026</option>
-      <option value="11">Novembro 2026</option>
-      <option value="12">Dezembro 2026</option>
-    </select>
+  <div class="filtros-container">
+    <div class="filtro-group">
+      <label class="filtro-label">Ano</label>
+      <select class="filtro-select" id="anoSel" onchange="renderGeral()">
+        <option value="2026" selected>2026</option>
+        <option value="2027">2027</option>
+      </select>
+    </div>
+    <div class="filtro-group">
+      <label class="filtro-label">Mês</label>
+      <select class="filtro-select" id="mesSel" onchange="renderGeral()">
+        <option value="1">Janeiro</option>
+        <option value="2">Fevereiro</option>
+        <option value="3">Março</option>
+        <option value="4" selected>Abril</option>
+        <option value="5">Maio</option>
+        <option value="6">Junho</option>
+        <option value="7">Julho</option>
+        <option value="8">Agosto</option>
+        <option value="9">Setembro</option>
+        <option value="10">Outubro</option>
+        <option value="11">Novembro</option>
+        <option value="12">Dezembro</option>
+      </select>
+    </div>
+    <div class="filtro-info" id="mesAnoInfo">Abril 2026</div>
   </div>
   
   <div id="recTotals" class="totals-row"></div>
@@ -344,26 +395,48 @@ td{padding:10px;border-bottom:1px solid #f0f0ee}
 </div>
 
 <div id="pane-acompanhamento" class="pane">
-  <h2 style="font-size:18px;font-weight:700;margin-bottom:1.5rem;color:#2d2d2d">📅 Acompanhamento Mensal</h2>
+  <div class="filtros-container">
+    <div class="filtro-group">
+      <label class="filtro-label">Ano</label>
+      <select class="filtro-select" id="anoAcomp" onchange="renderAcompanhamento()">
+        <option value="2026" selected>2026</option>
+        <option value="2027">2027</option>
+      </select>
+    </div>
+    <div class="filtro-info">Visualizando <span id="anoAcompInfo">2026</span></div>
+  </div>
   
   <!-- Grid de meses lado a lado -->
   <div id="acompanhamentoGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem"></div>
 </div>
 
 <div id="pane-emprestimos" class="pane">
-  <div class="mes-sel">
-    <label>Mês:</label>
-    <select id="mesEmp" onchange="renderEmprestimos()">
-      <option value="4" selected>Abril 2026</option>
-      <option value="5">Maio 2026</option>
-      <option value="6">Junho 2026</option>
-      <option value="7">Julho 2026</option>
-      <option value="8">Agosto 2026</option>
-      <option value="9">Setembro 2026</option>
-      <option value="10">Outubro 2026</option>
-      <option value="11">Novembro 2026</option>
-      <option value="12">Dezembro 2026</option>
-    </select>
+  <div class="filtros-container">
+    <div class="filtro-group">
+      <label class="filtro-label">Ano</label>
+      <select class="filtro-select" id="anoEmp" onchange="renderEmprestimos()">
+        <option value="2026" selected>2026</option>
+        <option value="2027">2027</option>
+      </select>
+    </div>
+    <div class="filtro-group">
+      <label class="filtro-label">Mês</label>
+      <select class="filtro-select" id="mesEmp" onchange="renderEmprestimos()">
+        <option value="1">Janeiro</option>
+        <option value="2">Fevereiro</option>
+        <option value="3">Março</option>
+        <option value="4" selected>Abril</option>
+        <option value="5">Maio</option>
+        <option value="6">Junho</option>
+        <option value="7">Julho</option>
+        <option value="8">Agosto</option>
+        <option value="9">Setembro</option>
+        <option value="10">Outubro</option>
+        <option value="11">Novembro</option>
+        <option value="12">Dezembro</option>
+      </select>
+    </div>
+    <div class="filtro-info" id="mesAnoEmpInfo">Abril 2026</div>
   </div>
   
   <div class="alert-blue">💰 <strong>7 empréstimos ativos</strong> com parcelas até 2030.</div>
@@ -384,31 +457,32 @@ td{padding:10px;border-bottom:1px solid #f0f0ee}
 </div>
 
 <div id="pane-cartoes" class="pane">
-  <div class="mes-sel">
-    <label>Mês:</label>
-    <select id="mesCards" onchange="renderCartoes()">
-      <option value="Abr/26" selected>Abril 2026</option>
-      <option value="Mai/26">Maio 2026</option>
-      <option value="Jun/26">Junho 2026</option>
-      <option value="Jul/26">Julho 2026</option>
-      <option value="Ago/26">Agosto 2026</option>
-      <option value="Set/26">Setembro 2026</option>
-      <option value="Out/26">Outubro 2026</option>
-      <option value="Nov/26">Novembro 2026</option>
-      <option value="Dez/26">Dezembro 2026</option>
-      <option value="Jan/27">Janeiro 2027</option>
-      <option value="Fev/27">Fevereiro 2027</option>
-      <option value="Mar/27">Março 2027</option>
-      <option value="Abr/27">Abril 2027</option>
-      <option value="Mai/27">Maio 2027</option>
-      <option value="Jun/27">Junho 2027</option>
-      <option value="Jul/27">Julho 2027</option>
-      <option value="Ago/27">Agosto 2027</option>
-      <option value="Set/27">Setembro 2027</option>
-      <option value="Out/27">Outubro 2027</option>
-      <option value="Nov/27">Novembro 2027</option>
-      <option value="Dez/27">Dezembro 2027</option>
-    </select>
+  <div class="filtros-container">
+    <div class="filtro-group">
+      <label class="filtro-label">Ano</label>
+      <select class="filtro-select" id="anoCards" onchange="renderCartoes()">
+        <option value="2026" selected>2026</option>
+        <option value="2027">2027</option>
+      </select>
+    </div>
+    <div class="filtro-group">
+      <label class="filtro-label">Mês</label>
+      <select class="filtro-select" id="mesCards" onchange="renderCartoes()">
+        <option value="1">Janeiro</option>
+        <option value="2">Fevereiro</option>
+        <option value="3">Março</option>
+        <option value="4" selected>Abril</option>
+        <option value="5">Maio</option>
+        <option value="6">Junho</option>
+        <option value="7">Julho</option>
+        <option value="8">Agosto</option>
+        <option value="9">Setembro</option>
+        <option value="10">Outubro</option>
+        <option value="11">Novembro</option>
+        <option value="12">Dezembro</option>
+      </select>
+    </div>
+    <div class="filtro-info" id="mesAnoCardsInfo">Abril 2026</div>
   </div>
   
   <div class="alert">⚠ <strong>29 cartões ativos</strong> — Wallace (22) + Bianca (7)</div>
@@ -572,57 +646,63 @@ function contarSextasFeiras(mes, ano) {
 
 // PAGAMENTOS E RECEBIMENTOS REALIZADOS
 const UPDATES={
-  abril:{
-    saldo_inicial:0, // Primeiro mês, sem saldo anterior
-    cartoes_pagos:['neon','mercadopago','amazon','azul_inf_b','inter_b','renner_b','brb_master_w','credicard','latam','porto_visa_w','nubank','porto_visa_b'],
-    emprestimos_pagos:['brb_b','mp2','itau_b','itau_w'],
-    gastos_pagos:[
-      {tipo:'celular',valor:210},
-      {tipo:'aluguel',valor:6300},
-      {tipo:'lote',valor:1202},
-      {tipo:'carro',valor:3099},
-      {tipo:'dogs',valor:400},
-      {tipo:'psicologa',valor:1160},
-      {tipo:'piscina',valor:175},
-      {tipo:'alimentacao',valor:1000},
-      {tipo:'remedios',valor:500},
-      {tipo:'gasolina_1',valor:266.67},
-      {tipo:'gasolina_10',valor:266.67},
-      {tipo:'gasolina_20',valor:266.67},
-      {tipo:'faxina_2',valor:200},
-      {tipo:'faxina_9',valor:200},
-      {tipo:'faxina_16',valor:200},
-      {tipo:'gastos_extras_3',valor:500},
-      {tipo:'gastos_extras_10',valor:500},
-      {tipo:'gastos_extras_17',valor:500}
-    ],
-    recebimentos:[
-      {tipo:'wallace_pj',data:'05/04',valor:8000},
-      {tipo:'ifood_15',data:'15/04',valor:2581},
-      {tipo:'mastermind',data:'05/04',valor:925*RATE},
-      {tipo:'mastermind',data:'17/04',valor:925*RATE},
-      {tipo:'pareto',data:'10/04',valor:4000},
-      {tipo:'r2',data:'12/04',valor:8000}
-    ]
+  2026:{
+    abril:{
+      saldo_inicial:0,
+      cartoes_pagos:['neon','mercadopago','amazon','azul_inf_b','inter_b','renner_b','brb_master_w','credicard','latam','porto_visa_w','nubank','porto_visa_b'],
+      emprestimos_pagos:['brb_b','mp2','itau_b','itau_w'],
+      gastos_pagos:[
+        {tipo:'celular',valor:210},
+        {tipo:'aluguel',valor:6300},
+        {tipo:'lote',valor:1202},
+        {tipo:'carro',valor:3099},
+        {tipo:'dogs',valor:400},
+        {tipo:'psicologa',valor:1160},
+        {tipo:'piscina',valor:175},
+        {tipo:'alimentacao',valor:1000},
+        {tipo:'remedios',valor:500},
+        {tipo:'gasolina_1',valor:266.67},
+        {tipo:'gasolina_10',valor:266.67},
+        {tipo:'gasolina_20',valor:266.67},
+        {tipo:'faxina_2',valor:200},
+        {tipo:'faxina_9',valor:200},
+        {tipo:'faxina_16',valor:200},
+        {tipo:'gastos_extras_3',valor:500},
+        {tipo:'gastos_extras_10',valor:500},
+        {tipo:'gastos_extras_17',valor:500}
+      ],
+      recebimentos:[
+        {tipo:'wallace_pj',data:'05/04',valor:8000},
+        {tipo:'ifood_15',data:'15/04',valor:2581},
+        {tipo:'mastermind',data:'05/04',valor:925*RATE},
+        {tipo:'mastermind',data:'17/04',valor:925*RATE},
+        {tipo:'pareto',data:'10/04',valor:4000},
+        {tipo:'r2',data:'12/04',valor:8000}
+      ]
+    },
+    maio:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    junho:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    julho:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    agosto:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    setembro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    outubro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    novembro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    dezembro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]}
   },
-  maio:{
-    saldo_inicial:0,
-    cartoes_pagos:[],
-    emprestimos_pagos:[],
-    gastos_pagos:[],
-    recebimentos:[]
-  },
-  junho:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
-  julho:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
-  agosto:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
-  setembro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
-  outubro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
-  novembro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
-  dezembro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
-  // 2027
-  janeiro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
-  fevereiro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
-  marco:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]}
+  2027:{
+    janeiro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    fevereiro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    marco:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    abril:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    maio:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    junho:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    julho:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    agosto:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    setembro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    outubro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    novembro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]},
+    dezembro:{saldo_inicial:0,cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]}
+  }
 };
 
 // Mapeamento mês número -> nome
@@ -633,8 +713,8 @@ const MES_NOME={
 
 // COMPATIBILIDADE (mantém variável antiga)
 const PAGAMENTOS={
-  cartoes:UPDATES.abril.cartoes_pagos,
-  emprestimos:UPDATES.abril.emprestimos_pagos
+  cartoes:UPDATES[2026].abril.cartoes_pagos,
+  emprestimos:UPDATES[2026].abril.emprestimos_pagos
 };
 
 // SCHEDULE MASTERMIND
@@ -892,22 +972,36 @@ function filtrarCartoes(filtro) {
 }
 
 function renderGeral(){
-  const mes=parseInt(document.getElementById('mesSel').value);
-  const ano = mes <= 12 ? 2026 : 2027;
-  const mesKey=MES_NOME[mes];
-  const updates=UPDATES[mesKey]||{cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]};
+  const ano = parseInt(document.getElementById('anoSel').value);
+  const mes = parseInt(document.getElementById('mesSel').value);
+  const mesKey = MES_NOME[mes];
+  
+  // Atualizar info display
+  const mesesNomes = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  document.getElementById('mesAnoInfo').textContent = mesesNomes[mes] + ' ' + ano;
+  document.getElementById('anoAtual').textContent = ano;
+  
+  const updates = UPDATES[ano] && UPDATES[ano][mesKey] ? UPDATES[ano][mesKey] : {cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]};
   
   // USAR O MONTH BALANCE DO MÊS ANTERIOR (que já foi calculado)
-  // Guardamos em um cache global
   if(!window.MONTH_BALANCE_CACHE) window.MONTH_BALANCE_CACHE = {};
   
   let SALDO_MES_ANTERIOR = 0;
   
-  if(mes > 4) {
-    const mesAnt = mes - 1;
-    const monthBalanceAnt = window.MONTH_BALANCE_CACHE[mesAnt] || 0;
+  // Calcular chave do mês anterior
+  let mesAnt = mes - 1;
+  let anoAnt = ano;
+  if(mesAnt === 0) {
+    mesAnt = 12;
+    anoAnt = ano - 1;
+  }
+  
+  const cacheKey = `${anoAnt}-${mesAnt}`;
+  const isFirstMonth = (ano === 2026 && mes === 4); // Abril/2026 é o primeiro mês
+  
+  if(!isFirstMonth) {
+    const monthBalanceAnt = window.MONTH_BALANCE_CACHE[cacheKey] || 0;
     
-    // REGRA: Se negativo → inverte e vai para Saldo, se positivo → vai para Current Amount
     if(monthBalanceAnt >= 0) {
       SALDO_ACUMULADO = monthBalanceAnt;
       SALDO_MES_ANTERIOR = 0;
@@ -1324,7 +1418,7 @@ function renderGeral(){
     <div class="tc" style="background:#F1F8E9;border-left:4px solid #558B2F"><div class="tl">Expenses (Paid)</div><div class="tv" style="color:#558B2F">${fmt(totalPagoCorreto)}</div><div class="ts">Pagos</div></div>
     <div class="tc" style="background:#FCE4EC;border-left:4px solid #C2185B"><div class="tl">Expenses (Remaining)</div><div class="tv" style="color:#C2185B">${fmt(aPagar)}</div><div class="ts">A Pagar</div></div>`;
   
-  window.MONTH_BALANCE_CACHE[mes] = monthBalance;
+  window.MONTH_BALANCE_CACHE[`${ano}-${mes}`] = monthBalance;
   const saldoMes = aReceber - aPagar;
   const saldoFinal = SALDO_ACUMULADO + saldoMes;
   document.getElementById('saldoAlert').innerHTML = saldoFinal >= 0 ? `💰 <strong>Saldo Final:</strong> ${fmt(saldoFinal)}` : `⚠️ <strong>Déficit Acumulado:</strong> ${fmt(saldoFinal)}`;
@@ -1489,8 +1583,17 @@ function renderGeral(){
   
 
 function renderAcompanhamento() {
-  // Renderizar meses começando de Abril até Dezembro (9 meses)
-  const mesesParaRenderizar = [4, 5, 6, 7, 8, 9, 10, 11, 12]; // Abril a Dezembro
+  const anoSel = parseInt(document.getElementById('anoAcomp').value);
+  document.getElementById('anoAcompInfo').textContent = anoSel;
+  
+  // Determinar quais meses renderizar baseado no ano
+  let mesesParaRenderizar;
+  if(anoSel === 2026) {
+    mesesParaRenderizar = [4, 5, 6, 7, 8, 9, 10, 11, 12]; // Abril a Dezembro
+  } else {
+    mesesParaRenderizar = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; // Janeiro a Dezembro
+  }
+  
   const mesesNomes = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
   
   let html = '';
@@ -1500,10 +1603,10 @@ function renderAcompanhamento() {
   
   mesesParaRenderizar.forEach(mesNum => {
     const mesKey = MES_NOME[mesNum];
-    const updates = UPDATES[mesKey] || {cartoes_pagos:[], emprestimos_pagos:[], gastos_pagos:[], recebimentos:[]};
-    const mesNome = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'][mesNum] + '/26';
+    const updates = UPDATES[anoSel] && UPDATES[anoSel][mesKey] ? UPDATES[anoSel][mesKey] : {cartoes_pagos:[], emprestimos_pagos:[], gastos_pagos:[], recebimentos:[]};
+    const mesNome = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'][mesNum] + '/' + anoSel.toString().substr(2);
     const mesNomeCompleto = mesesNomes[mesNum];
-    const ano = 2026;
+    const ano = anoSel;
     
     // ===== RECEITAS =====
     const mm = MM_SCHED[mesNum] || {c: 2};
@@ -1975,8 +2078,13 @@ function renderItemAcomp(nome, valor, pago = false, vencido = false) {
 }
 
 function renderEmprestimos(){
+  const ano = parseInt(document.getElementById('anoEmp').value);
   const mes = parseInt(document.getElementById('mesEmp').value);
   const mk = ['','jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][mes];
+  
+  // Atualizar info display
+  const mesesNomes = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  document.getElementById('mesAnoEmpInfo').textContent = mesesNomes[mes] + ' ' + ano;
   
   // Calcular total do mês
   let totalMes = 0;
@@ -2074,134 +2182,79 @@ function renderEmprestimos(){
 }
 
 function renderCartoes(){
-  const mes=document.getElementById('mesCards').value;
-  const meses=['Abr/26','Mai/26','Jun/26','Jul/26','Ago/26','Set/26','Out/26','Nov/26','Dez/26','Jan/27','Fev/27','Mar/27','Abr/27','Mai/27','Jun/27','Jul/27','Ago/27','Set/27','Out/27','Nov/27','Dez/27'];
-  const idx=meses.indexOf(mes);
-  const mesProx=meses[idx+1]||'—';
-  const mesNum=idx+4; // Abril/26=4, Maio/26=5, ..., Dez/26=12, Jan/27=13, etc
-  const mesKey=MES_NOME[mesNum>12?mesNum-12:mesNum]; // Ajustar para 2027
-  const updates=UPDATES[mesKey]||{cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]};
+  const ano = parseInt(document.getElementById('anoCards').value);
+  const mes = parseInt(document.getElementById('mesCards').value);
   
-  document.getElementById('mesAtualLabel1').textContent=mes;
-  document.getElementById('mesProxLabel1').textContent=mesProx;
+  // Atualizar info display
+  const mesesNomes = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  document.getElementById('mesAnoCardsInfo').textContent = mesesNomes[mes] + ' ' + ano;
+  
+  const mesStr = ['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][mes] + '/' + ano.toString().substr(2);
+  
+  // Calcular próximo mês
+  let mesProxNum = mes + 1;
+  let anoProx = ano;
+  if(mesProxNum > 12) {
+    mesProxNum = 1;
+    anoProx = ano + 1;
+  }
+  const mesProxStr = ['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][mesProxNum] + '/' + anoProx.toString().substr(2);
+  
+  const mesKey = MES_NOME[mes];
+  const updates = UPDATES[ano] && UPDATES[ano][mesKey] ? UPDATES[ano][mesKey] : {cartoes_pagos:[],emprestimos_pagos:[],gastos_pagos:[],recebimentos:[]};
+  
+  document.getElementById('mesAtualLabel1').textContent = mesStr;
+  document.getElementById('mesProxLabel1').textContent = mesProxStr;
   
   // Calcular totais
   const limTotal=CARDS.reduce((s,c)=>s+c.limite,0);
   const fatAtual=CARDS.reduce((s,c)=>{
-    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mes);
+    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mesStr);
     return s+(f?f.val:0);
   },0);
-  const fatProx=mesProx!=='—'?CARDS.reduce((s,c)=>{
-    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mesProx);
+  const fatProx=CARDS.reduce((s,c)=>{
+    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mesProxStr);
     return s+(f?f.val:0);
-  },0):0;
+  },0);
   
   // Calcular cartões pagos e a pagar
   const cartoesPagosVal=CARDS.reduce((s,c)=>{
     if(!updates.cartoes_pagos.includes(c.id))return s;
-    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mes);
+    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mesStr);
     return s+(f?f.val:0);
   },0);
   const cartoesAPagar=fatAtual-cartoesPagosVal;
   
-  // Calcular Limite Disponível = Limite Total - Soma de todas faturas em aberto de TODOS os meses
-  let emUsoTotal = 0;
-  CARDS.forEach(c => {
-    meses.forEach(m => {
-      const f = FATURAS.find(x => x.card === c.id && x.mes === m);
-      if (f) {
-        // Verificar se foi pago
-        const mesIdx = meses.indexOf(m);
-        let mesNumLoop, mesKeyLoop;
-        
-        if (mesIdx <= 8) {
-          // 2026: Abr=4, Mai=5, ..., Dez=12
-          mesNumLoop = mesIdx + 4;
-          mesKeyLoop = MES_NOME[mesNumLoop];
-          const updatesLoop = UPDATES[mesKeyLoop] || {cartoes_pagos:[]};
-          
-          if (!updatesLoop.cartoes_pagos.includes(c.id)) {
-            emUsoTotal += f.val;
-          }
-        } else if (mesIdx <= 11) {
-          // 2027 Jan-Mar: Jan=1, Fev=2, Mar=3
-          mesNumLoop = mesIdx - 8;
-          mesKeyLoop = MES_NOME[mesNumLoop];
-          const updatesLoop = UPDATES[mesKeyLoop] || {cartoes_pagos:[]};
-          
-          if (!updatesLoop.cartoes_pagos.includes(c.id)) {
-            emUsoTotal += f.val;
-          }
-        } else {
-          // 2027 Abr-Dez: Sempre contar (sem UPDATES)
-          emUsoTotal += f.val;
-        }
-      }
-    });
-  });
-  
-  const limiteDisponivel = limTotal - emUsoTotal;
+  // Calcular Limite Disponível (simplificado - apenas considera mês atual)
+  const limiteDisponivel = limTotal - fatAtual;
   
   document.getElementById('limiteTotal').textContent=fmt(limTotal);
   document.getElementById('faturaAtual').textContent=fmt(fatAtual);
-  document.getElementById('faturaProx').textContent=mesProx!=='—'?fmt(fatProx):'—';
+  document.getElementById('faturaProx').textContent=fmt(fatProx);
   document.getElementById('cartoesPagosCard').textContent=fmt(cartoesPagosVal);
   document.getElementById('cartoesAPagarCard').textContent=fmt(cartoesAPagar);
   document.getElementById('limiteDisponivel').textContent=fmt(limiteDisponivel);
-  document.getElementById('limiteEmUso').textContent='Em uso: '+fmt(emUsoTotal);
+  document.getElementById('limiteEmUso').textContent='Em uso: '+fmt(fatAtual);
   
-  // Cards individuais - calcular limite disponível de cada cartão E APLICAR FILTRO
+  // Cards individuais
   document.getElementById('cardsGrid').innerHTML=CARDS
     .filter(c => {
       if (FILTRO_CARTAO === 'todos') return true;
       return c.owner === FILTRO_CARTAO;
     })
     .map(c=>{
-    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mes);
+    const f=FATURAS.find(x=>x.card===c.id&&x.mes===mesStr);
     const val=f?f.val:0;
-    const isPago=mes==='Abr/26'&&PAGAMENTOS.cartoes.includes(c.id);
+    const isPago=updates.cartoes_pagos.includes(c.id);
     
-    // Calcular quanto está em uso deste cartão em TODOS os meses
-    let emUsoCartao = 0;
-    meses.forEach(m => {
-      const fatura = FATURAS.find(x => x.card === c.id && x.mes === m);
-      if (fatura) {
-        const mesIdx = meses.indexOf(m);
-        let mesNumLoop, mesKeyLoop;
-        
-        if (mesIdx <= 8) {
-          // 2026: Abr=4, Mai=5, ..., Dez=12
-          mesNumLoop = mesIdx + 4;
-          mesKeyLoop = MES_NOME[mesNumLoop];
-          const updatesLoop = UPDATES[mesKeyLoop] || {cartoes_pagos:[]};
-          
-          if (!updatesLoop.cartoes_pagos.includes(c.id)) {
-            emUsoCartao += fatura.val;
-          }
-        } else if (mesIdx <= 11) {
-          // 2027 Jan-Mar: Jan=1, Fev=2, Mar=3
-          mesNumLoop = mesIdx - 8;
-          mesKeyLoop = MES_NOME[mesNumLoop];
-          const updatesLoop = UPDATES[mesKeyLoop] || {cartoes_pagos:[]};
-          
-          if (!updatesLoop.cartoes_pagos.includes(c.id)) {
-            emUsoCartao += fatura.val;
-          }
-        } else {
-          // 2027 Abr-Dez: Sempre contar (sem UPDATES)
-          emUsoCartao += fatura.val;
-        }
-      }
-    });
+    // Calcular limite disponível do cartão (simplificado)
+    const limiteDisponivelCartao = c.limite - val;
     
-    const limiteDisponivelCartao = c.limite - emUsoCartao;
-    
-    // Cor do limite disponível: verde se positivo, cinza se zero, vermelho se negativo
-    let corDisponivel = '#388E3C'; // verde (padrão)
+    let corDisponivel = '#388E3C';
     if (limiteDisponivelCartao < 0) {
-      corDisponivel = '#D32F2F'; // vermelho
+      corDisponivel = '#D32F2F';
     } else if (limiteDisponivelCartao === 0) {
-      corDisponivel = '#757575'; // cinza
+      corDisponivel = '#757575';
     }
     
     const bg=isPago?'#E8F5E9':c.owner==='wallace'?'#E3F2FD':'#FCE4EC';
@@ -2210,36 +2263,27 @@ function renderCartoes(){
     return `<div class="metric" style="background:${bg}"><div class="metric-accent" style="background:${accent}"></div><div class="metric-label">${check}${c.nome}</div><div class="metric-value" style="${isPago?'color:#2E7D32':''}">${fmt(val)}</div><div class="metric-sub">dia ${c.dia} • ${fmt(c.limite)}<br><span style="color:${corDisponivel};font-weight:600">Disponível: ${fmt(limiteDisponivelCartao)}</span></div></div>`;
   }).join('');
   
-  // Tabela detalhada
-  let html='<thead><tr><th>Cartão</th>';
-  meses.forEach(m=>html+=`<th class="r">${m}</th>`);
-  html+='<th class="r">Total</th></tr></thead><tbody>';
+  // Tabela simplificada - apenas mês atual e próximo
+  let html='<thead><tr><th>Cartão</th><th class="r">'+mesStr+'</th><th class="r">'+mesProxStr+'</th><th class="r">Total</th></tr></thead><tbody>';
   
   CARDS.forEach(c=>{
     html+=`<tr><td><strong>${c.nome}</strong></td>`;
-    let tot=0;
-    meses.forEach(m=>{
-      const f=FATURAS.find(x=>x.card===c.id&&x.mes===m);
-      const v=f?f.val:0;
-      tot+=v;
-      const isPago=m==='Abr/26'&&PAGAMENTOS.cartoes.includes(c.id);
-      html+=`<td class="r" style="${isPago?'text-decoration:line-through;opacity:0.5':''}">${v?fmt(v):'—'}</td>`;
-    });
+    const fAtual=FATURAS.find(x=>x.card===c.id&&x.mes===mesStr);
+    const vAtual=fAtual?fAtual.val:0;
+    const fProx=FATURAS.find(x=>x.card===c.id&&x.mes===mesProxStr);
+    const vProx=fProx?fProx.val:0;
+    const tot=vAtual+vProx;
+    const isPago=updates.cartoes_pagos.includes(c.id);
+    html+=`<td class="r" style="${isPago?'text-decoration:line-through;opacity:0.5':''}">${vAtual?fmt(vAtual):'—'}</td>`;
+    html+=`<td class="r">${vProx?fmt(vProx):'—'}</td>`;
     html+=`<td class="r" style="font-weight:700">${fmt(tot)}</td></tr>`;
   });
   
   // Linha de total
   html+='<tr class="subtotal"><td>TOTAL</td>';
-  let grandTotal=0;
-  meses.forEach(m=>{
-    const tot=CARDS.reduce((s,c)=>{
-      const f=FATURAS.find(x=>x.card===c.id&&x.mes===m);
-      return s+(f?f.val:0);
-    },0);
-    grandTotal+=tot;
-    html+=`<td class="r">${fmt(tot)}</td>`;
-  });
-  html+=`<td class="r" style="color:#C62828">${fmt(grandTotal)}</td></tr>`;
+  html+=`<td class="r">${fmt(fatAtual)}</td>`;
+  html+=`<td class="r">${fmt(fatProx)}</td>`;
+  html+=`<td class="r" style="color:#C62828">${fmt(fatAtual+fatProx)}</td></tr>`;
   html+='</tbody>';
   
   document.getElementById('cardsTable').innerHTML=html;
@@ -2255,6 +2299,610 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.log('Erro ao registrar Service Worker:', err));
   });
 }
+</script>
+
+<!-- Botão Flutuante -->
+<button class="fab" id="fabBtn" title="Adicionar Update">
+  <svg viewBox="0 0 24 24">
+    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+  </svg>
+</button>
+
+<!-- Modal de Update -->
+<div class="modal" id="updateModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Adicionar Update</h2>
+      <button class="modal-close" id="closeModal">&times;</button>
+    </div>
+    
+    <form id="updateForm">
+      <!-- Tipo de Update -->
+      <div class="form-group">
+        <label class="form-label">Tipo de Update</label>
+        <div class="form-radio-group">
+          <div class="form-radio">
+            <input type="radio" id="typeIncome" name="updateType" value="income" checked>
+            <label for="typeIncome">Income</label>
+          </div>
+          <div class="form-radio">
+            <input type="radio" id="typeExpense" name="updateType" value="expense">
+            <label for="typeExpense">Expense</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mês de Referência -->
+      <div class="form-group">
+        <label class="form-label">Aplicar em:</label>
+        <div class="form-radio-group">
+          <div class="form-radio">
+            <input type="radio" id="freqRecorrente" name="mesReferencia" value="recorrente">
+            <label for="freqRecorrente">Recorrente (todos os meses)</label>
+          </div>
+          <div class="form-radio">
+            <input type="radio" id="freqPontual" name="mesReferencia" value="pontual" checked>
+            <label for="freqPontual">Pontual (mês específico)</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" id="mesEspecificoField">
+        <label class="form-label">Mês Específico</label>
+        <select class="form-select" id="mesEspecifico">
+          <option value="4">Abril 2026</option>
+          <option value="5">Maio 2026</option>
+          <option value="6">Junho 2026</option>
+          <option value="7">Julho 2026</option>
+          <option value="8">Agosto 2026</option>
+          <option value="9">Setembro 2026</option>
+          <option value="10">Outubro 2026</option>
+          <option value="11">Novembro 2026</option>
+          <option value="12">Dezembro 2026</option>
+        </select>
+      </div>
+
+      <!-- INCOME FIELDS -->
+      <div id="incomeFields">
+        <div class="form-group">
+          <label class="form-label">Tipo de Receita</label>
+          <select class="form-select" id="incomeList">
+            <option value="">Selecione...</option>
+            <option value="wallace_pj">PL (Wallace)</option>
+            <option value="ifood_15">iFood 15 (Wallace)</option>
+            <option value="ifood_30">iFood 30 (Wallace)</option>
+            <option value="caucao">Caução (Wallace)</option>
+            <option value="r2">R2 (Wallace)</option>
+            <option value="ifood_plr">iFood PLR (Wallace)</option>
+            <option value="mastermind">MasterMind (Bianca)</option>
+            <option value="mind_body">Mind Body Green (Bianca)</option>
+            <option value="pareto">Pareto (Bianca)</option>
+            <option value="above_zero">Above Zero (Bianca)</option>
+            <option value="novo">➕ Adicionar novo...</option>
+          </select>
+        </div>
+
+        <div class="form-group hidden" id="incomeNovoField">
+          <label class="form-label">Nome da Nova Receita</label>
+          <input type="text" class="form-input" id="incomeNome" placeholder="Ex: Freela Design, Consultoria, etc">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Valor (R$)</label>
+          <input type="number" class="form-input" id="incomeValor" placeholder="0.00" step="0.01">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Dia de recebimento</label>
+          <input type="number" class="form-input" id="incomeDia" placeholder="1-31" min="1" max="31">
+        </div>
+      </div>
+
+      <!-- EXPENSE FIELDS -->
+      <div id="expenseFields" class="hidden">
+        <div class="form-group">
+          <label class="form-label">Categoria</label>
+          <select class="form-select" id="expenseCategoria">
+            <option value="">Selecione...</option>
+            <option value="casa">Casa</option>
+            <option value="estudos">Estudos</option>
+            <option value="saude">Saúde</option>
+            <option value="fiscal">Gastos Fiscais</option>
+            <option value="outros">Outros</option>
+            <option value="cartoes">Cartões</option>
+            <option value="emprestimos">Empréstimos</option>
+          </select>
+        </div>
+
+        <div id="casaFields" class="hidden">
+          <div class="form-group">
+            <label class="form-label">Gasto de Casa</label>
+            <select class="form-select" id="casaTipo">
+              <option value="">Selecione...</option>
+              <option value="aluguel">Aluguel</option>
+              <option value="dogs">Dogs</option>
+              <option value="lote">Lote</option>
+              <option value="piscina">Piscina</option>
+              <option value="alimentacao">Alimentação</option>
+              <option value="carro">Carro</option>
+              <option value="streams">Streams</option>
+              <option value="celular">Celular</option>
+              <option value="internet">Internet</option>
+              <option value="energia">Energia</option>
+              <option value="agua">Água</option>
+              <option value="gasolina">Gasolina</option>
+              <option value="faxina">Faxina</option>
+              <option value="gastos_extras">Gastos Extras</option>
+              <option value="novo">➕ Adicionar novo...</option>
+            </select>
+          </div>
+          <div class="form-group hidden" id="casaNovoField">
+            <label class="form-label">Nome do Novo Gasto</label>
+            <input type="text" class="form-input" id="casaNovo" placeholder="Ex: Condomínio, Jardinagem, etc">
+          </div>
+        </div>
+
+        <div id="estudosFields" class="hidden">
+          <div class="form-group">
+            <label class="form-label">Gasto de Estudos</label>
+            <select class="form-select" id="estudosTipo">
+              <option value="">Selecione...</option>
+              <option value="fiap">FIAP</option>
+              <option value="novo">➕ Adicionar novo...</option>
+            </select>
+          </div>
+          <div class="form-group hidden" id="estudosNovoField">
+            <label class="form-label">Nome do Novo Gasto</label>
+            <input type="text" class="form-input" id="estudosNovo" placeholder="Ex: Curso, Livros, etc">
+          </div>
+        </div>
+
+        <div id="saudeFields" class="hidden">
+          <div class="form-group">
+            <label class="form-label">Gasto de Saúde</label>
+            <select class="form-select" id="saudeTipo">
+              <option value="">Selecione...</option>
+              <option value="remedios">Remédios</option>
+              <option value="psicologa">Psicóloga</option>
+              <option value="novo">➕ Adicionar novo...</option>
+            </select>
+          </div>
+          <div class="form-group hidden" id="saudeNovoField">
+            <label class="form-label">Nome do Novo Gasto</label>
+            <input type="text" class="form-input" id="saudeNovo" placeholder="Ex: Dentista, Exames, etc">
+          </div>
+        </div>
+
+        <div id="fiscalFields" class="hidden">
+          <div class="form-group">
+            <label class="form-label">Gasto Fiscal</label>
+            <select class="form-select" id="fiscalTipo">
+              <option value="">Selecione...</option>
+              <option value="imposto">Imposto</option>
+              <option value="contabilidade">Contabilidade</option>
+              <option value="multa">Multa</option>
+              <option value="novo">➕ Adicionar novo...</option>
+            </select>
+          </div>
+          <div class="form-group hidden" id="fiscalNovoField">
+            <label class="form-label">Nome do Novo Gasto</label>
+            <input type="text" class="form-input" id="fiscalNovo" placeholder="Ex: IPVA, Taxas, etc">
+          </div>
+        </div>
+
+        <div id="outrosFields" class="hidden">
+          <div class="form-group">
+            <label class="form-label">Outros Gastos</label>
+            <input type="text" class="form-input" id="outrosNome" placeholder="Descreva o gasto">
+          </div>
+        </div>
+
+        <div id="cartoesFields" class="hidden">
+          <div class="form-group">
+            <label class="form-label">Cartão</label>
+            <select class="form-select" id="cartaoTipo">
+              <option value="">Selecione...</option>
+              <option value="neon">Neon (W)</option>
+              <option value="mercadopago">MercadoPago (W)</option>
+              <option value="amazon">Amazon (W)</option>
+              <option value="azul_inf_b">Azul Infinite (B)</option>
+              <option value="inter_b">Inter (B)</option>
+              <option value="renner_b">Renner (B)</option>
+              <option value="brb_master_w">BRB Master (W)</option>
+              <option value="credicard">Credicard (W)</option>
+              <option value="latam">Latam (W)</option>
+              <option value="porto_visa_w">Porto Visa (W)</option>
+              <option value="nubank">Nubank (W)</option>
+              <option value="porto_visa_b">Porto Visa (B)</option>
+              <option value="novo">➕ Adicionar novo cartão...</option>
+            </select>
+          </div>
+          <div class="form-group hidden" id="cartaoNovoField">
+            <label class="form-label">Nome do Novo Cartão</label>
+            <input type="text" class="form-input" id="cartaoNovo" placeholder="Ex: Mastercard Black, Visa Gold, etc">
+          </div>
+        </div>
+
+        <div id="emprestimosFields" class="hidden">
+          <div class="form-group">
+            <label class="form-label">Empréstimo</label>
+            <select class="form-select" id="emprestimoTipo">
+              <option value="">Selecione...</option>
+              <option value="itau_b">Itau (Bianca)</option>
+              <option value="brb_b">BRB (Bianca)</option>
+              <option value="brb_b2">BRB 2 (Bianca)</option>
+              <option value="b5">Banco do Brasil (Wallace)</option>
+              <option value="mp1">Mercado Pago 1 (Wallace)</option>
+              <option value="mp2">Mercado Pago 2 (Wallace)</option>
+              <option value="itau_w">Itau (Wallace)</option>
+              <option value="novo">➕ Adicionar novo empréstimo...</option>
+            </select>
+          </div>
+          <div class="form-group hidden" id="emprestimoNovoField">
+            <label class="form-label">Nome do Novo Empréstimo</label>
+            <input type="text" class="form-input" id="emprestimoNovo" placeholder="Ex: Santander, Caixa, etc">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Valor (R$)</label>
+          <input type="number" class="form-input" id="expenseValor" placeholder="0.00" step="0.01">
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="update-preview">
+        <div class="update-preview-title">📋 Código do Update:</div>
+        <div class="update-code" id="updatePreview">{tipo:'exemplo',valor:0}</div>
+      </div>
+
+      <!-- Botões -->
+      <button type="button" class="btn-secondary" id="copyBtn">Copiar e Enviar para mim</button>
+    </form>
+  </div>
+</div>
+
+<script>
+// ===== CONTROLE DO MODAL =====
+const fabBtn = document.getElementById('fabBtn');
+const modal = document.getElementById('updateModal');
+const closeModal = document.getElementById('closeModal');
+const updatePreview = document.getElementById('updatePreview');
+const copyBtn = document.getElementById('copyBtn');
+
+fabBtn.addEventListener('click', () => {
+  modal.classList.add('active');
+  updatePreviewCode();
+});
+
+closeModal.addEventListener('click', () => {
+  modal.classList.remove('active');
+});
+
+modal.addEventListener('click', (e) => {
+  if (e.target === modal) {
+    modal.classList.remove('active');
+  }
+});
+
+// ===== ALTERNAR ENTRE INCOME E EXPENSE =====
+document.querySelectorAll('input[name="updateType"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    const incomeFields = document.getElementById('incomeFields');
+    const expenseFields = document.getElementById('expenseFields');
+    
+    if (e.target.value === 'income') {
+      incomeFields.classList.remove('hidden');
+      expenseFields.classList.add('hidden');
+    } else {
+      incomeFields.classList.add('hidden');
+      expenseFields.classList.remove('hidden');
+    }
+    updatePreviewCode();
+  });
+});
+
+// ===== ALTERNAR ENTRE RECORRENTE E PONTUAL =====
+document.querySelectorAll('input[name="mesReferencia"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    const mesEspecificoField = document.getElementById('mesEspecificoField');
+    
+    if (e.target.value === 'recorrente') {
+      mesEspecificoField.classList.add('hidden');
+    } else {
+      mesEspecificoField.classList.remove('hidden');
+    }
+    updatePreviewCode();
+  });
+});
+
+// ===== ALTERNAR CATEGORIAS DE EXPENSE =====
+document.getElementById('expenseCategoria').addEventListener('change', (e) => {
+  ['casa','estudos','saude','fiscal','outros','cartoes','emprestimos'].forEach(cat => {
+    document.getElementById(cat + 'Fields').classList.add('hidden');
+  });
+  
+  const categoria = e.target.value;
+  if (categoria) {
+    document.getElementById(categoria + 'Fields').classList.remove('hidden');
+  }
+  updatePreviewCode();
+});
+
+// ===== MOSTRAR CAMPO "ADICIONAR NOVO" =====
+// ===== VALORES PADRÃO POR TIPO =====
+const valoresPadrao = {
+  // Income
+  wallace_pj: 8000,
+  ifood_15: 2581,
+  ifood_30: 2581,
+  mastermind: 9131,
+  mind_body: 12338.75,
+  above_zero: 12338.75,
+  pareto: 4000,
+  caucao: 1682,
+  r2: 8000,
+  ifood_plr: 4500,
+  
+  // Casa
+  aluguel: 6300,
+  dogs: 400,
+  lote: 1202,
+  piscina: 175,
+  alimentacao: 1000,
+  carro: 3099,
+  streams: 557,
+  celular: 210,
+  internet: 170,
+  energia: 400,
+  agua: 300,
+  gasolina: 266.67,
+  faxina: 200,
+  gastos_extras: 500,
+  
+  // Estudos
+  fiap: 580,
+  
+  // Saúde
+  remedios: 500,
+  psicologa: 1160,
+  
+  // Fiscal
+  imposto: 1838.5,
+  contabilidade: 534,
+  multa: 328
+};
+
+// Income - preencher valor automaticamente
+document.getElementById('incomeList').addEventListener('change', (e) => {
+  const novoField = document.getElementById('incomeNovoField');
+  const valorField = document.getElementById('incomeValor');
+  
+  if (e.target.value === 'novo') {
+    novoField.classList.remove('hidden');
+    valorField.value = '';
+  } else {
+    novoField.classList.add('hidden');
+    // Preencher valor padrão se existir
+    if (valoresPadrao[e.target.value]) {
+      valorField.value = valoresPadrao[e.target.value];
+    } else {
+      valorField.value = '';
+    }
+  }
+  updatePreviewCode();
+});
+
+// Casa
+document.getElementById('casaTipo').addEventListener('change', (e) => {
+  const novoField = document.getElementById('casaNovoField');
+  const valorField = document.getElementById('expenseValor');
+  
+  if (e.target.value === 'novo') {
+    novoField.classList.remove('hidden');
+    valorField.value = '';
+  } else {
+    novoField.classList.add('hidden');
+    if (valoresPadrao[e.target.value]) {
+      valorField.value = valoresPadrao[e.target.value];
+    } else {
+      valorField.value = '';
+    }
+  }
+  updatePreviewCode();
+});
+
+// Estudos
+document.getElementById('estudosTipo').addEventListener('change', (e) => {
+  const novoField = document.getElementById('estudosNovoField');
+  const valorField = document.getElementById('expenseValor');
+  
+  if (e.target.value === 'novo') {
+    novoField.classList.remove('hidden');
+    valorField.value = '';
+  } else {
+    novoField.classList.add('hidden');
+    if (valoresPadrao[e.target.value]) {
+      valorField.value = valoresPadrao[e.target.value];
+    } else {
+      valorField.value = '';
+    }
+  }
+  updatePreviewCode();
+});
+
+// Saúde
+document.getElementById('saudeTipo').addEventListener('change', (e) => {
+  const novoField = document.getElementById('saudeNovoField');
+  const valorField = document.getElementById('expenseValor');
+  
+  if (e.target.value === 'novo') {
+    novoField.classList.remove('hidden');
+    valorField.value = '';
+  } else {
+    novoField.classList.add('hidden');
+    if (valoresPadrao[e.target.value]) {
+      valorField.value = valoresPadrao[e.target.value];
+    } else {
+      valorField.value = '';
+    }
+  }
+  updatePreviewCode();
+});
+
+// Fiscal
+document.getElementById('fiscalTipo').addEventListener('change', (e) => {
+  const novoField = document.getElementById('fiscalNovoField');
+  const valorField = document.getElementById('expenseValor');
+  
+  if (e.target.value === 'novo') {
+    novoField.classList.remove('hidden');
+    valorField.value = '';
+  } else {
+    novoField.classList.add('hidden');
+    if (valoresPadrao[e.target.value]) {
+      valorField.value = valoresPadrao[e.target.value];
+    } else {
+      valorField.value = '';
+    }
+  }
+  updatePreviewCode();
+});
+
+// Cartões
+document.getElementById('cartaoTipo').addEventListener('change', (e) => {
+  const novoField = document.getElementById('cartaoNovoField');
+  if (e.target.value === 'novo') {
+    novoField.classList.remove('hidden');
+  } else {
+    novoField.classList.add('hidden');
+  }
+  updatePreviewCode();
+});
+
+// Empréstimos
+document.getElementById('emprestimoTipo').addEventListener('change', (e) => {
+  const novoField = document.getElementById('emprestimoNovoField');
+  if (e.target.value === 'novo') {
+    novoField.classList.remove('hidden');
+  } else {
+    novoField.classList.add('hidden');
+  }
+  updatePreviewCode();
+});
+
+// ===== ATUALIZAR PREVIEW EM TEMPO REAL =====
+document.querySelectorAll('input, select').forEach(el => {
+  el.addEventListener('input', updatePreviewCode);
+  el.addEventListener('change', updatePreviewCode);
+});
+
+function updatePreviewCode() {
+  const updateType = document.querySelector('input[name="updateType"]:checked').value;
+  const mesReferencia = document.querySelector('input[name="mesReferencia"]:checked').value;
+  const mesEspecifico = document.getElementById('mesEspecifico').value;
+  
+  const mesesNomes = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+  const mesNome = mesesNomes[parseInt(mesEspecifico)];
+  
+  let codigo = '';
+  let prefixo = '';
+  
+  if (mesReferencia === 'recorrente') {
+    prefixo = '🔁 RECORRENTE (todos os meses)\n\n';
+  } else {
+    prefixo = `📅 ${mesNome} 2026\n\n`;
+  }
+  
+  if (updateType === 'income') {
+    const incomeList = document.getElementById('incomeList').value;
+    let tipo = incomeList;
+    
+    if (incomeList === 'novo') {
+      const nomeNovo = document.getElementById('incomeNome').value || 'nova_receita';
+      tipo = nomeNovo.toLowerCase().replace(/\s+/g, '_');
+    } else if (!incomeList) {
+      tipo = 'selecione_receita';
+    }
+    
+    const valor = parseFloat(document.getElementById('incomeValor').value) || 0;
+    const dia = document.getElementById('incomeDia').value || '01';
+    
+    codigo = `{tipo:'${tipo}',data:'${dia}/${mesEspecifico.padStart(2, '0')}',valor:${valor}}`;
+    
+  } else {
+    const categoria = document.getElementById('expenseCategoria').value;
+    let tipo = '';
+    let valor = parseFloat(document.getElementById('expenseValor').value) || 0;
+    
+    if (categoria === 'casa') {
+      const casaTipo = document.getElementById('casaTipo').value;
+      if (casaTipo === 'novo') {
+        tipo = document.getElementById('casaNovo').value.toLowerCase().replace(/\s+/g, '_') || 'novo_gasto';
+      } else {
+        tipo = casaTipo;
+      }
+    } else if (categoria === 'estudos') {
+      const estudosTipo = document.getElementById('estudosTipo').value;
+      if (estudosTipo === 'novo') {
+        tipo = document.getElementById('estudosNovo').value.toLowerCase().replace(/\s+/g, '_') || 'novo_gasto';
+      } else {
+        tipo = estudosTipo;
+      }
+    } else if (categoria === 'saude') {
+      const saudeTipo = document.getElementById('saudeTipo').value;
+      if (saudeTipo === 'novo') {
+        tipo = document.getElementById('saudeNovo').value.toLowerCase().replace(/\s+/g, '_') || 'novo_gasto';
+      } else {
+        tipo = saudeTipo;
+      }
+    } else if (categoria === 'fiscal') {
+      const fiscalTipo = document.getElementById('fiscalTipo').value;
+      if (fiscalTipo === 'novo') {
+        tipo = document.getElementById('fiscalNovo').value.toLowerCase().replace(/\s+/g, '_') || 'novo_gasto';
+      } else {
+        tipo = fiscalTipo;
+      }
+    } else if (categoria === 'outros') {
+      tipo = document.getElementById('outrosNome').value.toLowerCase().replace(/\s+/g, '_');
+    } else if (categoria === 'cartoes') {
+      const cartaoTipo = document.getElementById('cartaoTipo').value;
+      if (cartaoTipo === 'novo') {
+        tipo = document.getElementById('cartaoNovo').value.toLowerCase().replace(/\s+/g, '_') || 'novo_cartao';
+      } else {
+        tipo = cartaoTipo;
+      }
+    } else if (categoria === 'emprestimos') {
+      const emprestimoTipo = document.getElementById('emprestimoTipo').value;
+      if (emprestimoTipo === 'novo') {
+        tipo = document.getElementById('emprestimoNovo').value.toLowerCase().replace(/\s+/g, '_') || 'novo_emprestimo';
+      } else {
+        tipo = emprestimoTipo;
+      }
+    }
+    
+    if (!tipo) tipo = 'selecione_categoria';
+    
+    if (categoria === 'cartoes' || categoria === 'emprestimos') {
+      codigo = `'${tipo}'`;
+    } else {
+      codigo = `{tipo:'${tipo}',valor:${valor}}`;
+    }
+  }
+  
+  updatePreview.textContent = prefixo + codigo;
+}
+
+// ===== COPIAR CÓDIGO =====
+copyBtn.addEventListener('click', () => {
+  const code = updatePreview.textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    alert('✅ Código copiado!\n\nAgora cole no chat comigo e eu atualizo automaticamente o painel!');
+    modal.classList.remove('active');
+  });
+});
+
+updatePreviewCode();
 </script>
 
 </body>
